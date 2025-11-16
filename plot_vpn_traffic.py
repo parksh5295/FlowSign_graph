@@ -91,7 +91,7 @@ def main():
                bbox_to_anchor=(0.5, 1.0),
                bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0, 0.12, 1, 0.90])
+    fig.tight_layout(rect=[0, 0.05, 1, 0.90])
 
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
