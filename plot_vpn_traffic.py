@@ -46,7 +46,7 @@ def main():
     )
     ax_f1.set_title("F1 Score")
     ax_f1.set_xticks(list(x))
-    ax_f1.set_xticklabels(datasets)
+    ax_f1.set_xticklabels(datasets, rotation=15, ha='right')
     ax_f1.set_ylabel("F1 Score (%)")
     ax_f1.grid(True, alpha=0.3, linestyle='--')
 
@@ -69,20 +69,21 @@ def main():
     )
     ax_acc.set_title("Accuracy")
     ax_acc.set_xticks(list(x))
-    ax_acc.set_xticklabels(datasets)
+    ax_acc.set_xticklabels(datasets, rotation=15, ha='right')
     ax_acc.set_ylabel("Accuracy (%)")
     ax_acc.grid(True, alpha=0.3, linestyle='--')
 
-    # Add a single legend at the top center
+    # Add a single legend at the top center, above the graph area
     # Get handles and labels from one of the subplots
     handles, labels = ax_f1.get_legend_handles_labels()
     fig.legend(handles, labels, 
                loc='upper center', 
                ncol=2, 
                frameon=True,
-               bbox_to_anchor=(0.5, 0.95))
+               bbox_to_anchor=(0.5, 1.0),
+               bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0, 0.03, 1, 0.92])
+    fig.tight_layout(rect=[0, 0.08, 1, 0.90])
 
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
