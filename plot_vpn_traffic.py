@@ -73,17 +73,19 @@ def main():
     ax_acc.set_ylabel("Accuracy (%)")
     ax_acc.grid(True, alpha=0.3, linestyle='--')
 
-    # Add a single legend at the top center of the figure
+    # Set title first (at the top)
+    fig.suptitle("Snort vs Snort + FlowSign Performance Comparison", fontsize=14, fontweight="bold", y=0.98)
+    
+    # Add a single legend below the title
     # Get handles and labels from one of the subplots
     handles, labels = ax_f1.get_legend_handles_labels()
     fig.legend(handles, labels, 
                loc='upper center', 
                ncol=2, 
                frameon=True,
-               bbox_to_anchor=(0.5, 0.98))
-
-    fig.suptitle("Snort vs Snort + FlowSign Performance Comparison", fontsize=14, fontweight="bold")
-    fig.tight_layout(rect=[0, 0.03, 1, 0.92])
+               bbox_to_anchor=(0.5, 0.93))
+    
+    fig.tight_layout(rect=[0, 0.03, 1, 0.90])
 
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
