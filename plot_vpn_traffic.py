@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
 from pathlib import Path
@@ -5,7 +6,8 @@ from pathlib import Path
 
 def main():
     # CSV 파일 경로 (이 스크립트 기준으로 ../Results/VPN_traffic.csv)
-    csv_path = Path(__file__).resolve().parent.parent / "Results" / "VPN_traffic.csv"
+    base_dir = Path(__file__).resolve().parent
+    csv_path = base_dir.parent / "Results" / "VPN_traffic.csv"
 
     # 데이터 불러오기
     df = pd.read_csv(csv_path)
@@ -68,8 +70,12 @@ def main():
     fig.suptitle("Snort vs Snort + FlowSign 성능 비교", fontsize=14, fontweight="bold")
     fig.tight_layout(rect=[0, 0.03, 1, 0.95])
 
-    # 이미지 파일로도 저장
-    output_path = Path(__file__).resolve().parent / "vpn_traffic_performance.png"
+    # 출력 폴더 설정: ../Graph
+    graph_dir = base_dir.parent / "Graph"
+    os.makedirs(graph_dir, exist_ok=True)
+
+    # 이미지 파일로 저장 (예: ../Graph/vpn_traffic_performance.png)
+    output_path = graph_dir / "vpn_traffic_performance.png"
     plt.savefig(output_path, dpi=300)
 
     # 화면에 표시
@@ -78,5 +84,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
