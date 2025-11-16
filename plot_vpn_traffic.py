@@ -49,7 +49,7 @@ def main():
     )
     ax_f1.set_title("F1 Score", fontsize=10)
     ax_f1.set_xticks(list(x))
-    ax_f1.set_xticklabels(datasets, fontsize=8)
+    ax_f1.set_xticklabels(datasets, fontsize=8, rotation=90, ha='center')
     ax_f1.set_ylabel("F1 Score (%)", fontsize=9)
     ax_f1.set_ylim(0, 100)
     ax_f1.tick_params(axis='y', labelsize=8)
@@ -74,7 +74,7 @@ def main():
     )
     ax_acc.set_title("Accuracy", fontsize=10)
     ax_acc.set_xticks(list(x))
-    ax_acc.set_xticklabels(datasets, fontsize=8)
+    ax_acc.set_xticklabels(datasets, fontsize=8, rotation=90, ha='center')
     ax_acc.set_ylabel("Accuracy (%)", fontsize=9)
     ax_acc.set_ylim(0, 100)
     ax_acc.tick_params(axis='y', labelsize=8)
@@ -91,7 +91,7 @@ def main():
                bbox_to_anchor=(0.5, 1.0),
                bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0, 0.08, 1, 0.90])
+    fig.tight_layout(rect=[0, 0.12, 1, 0.90])
 
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
