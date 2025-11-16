@@ -1,29 +1,34 @@
 import os
-import pandas as pd
-import matplotlib.pyplot as plt
 from pathlib import Path
+
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+import pandas as pd
 
 
 def main():
-    # CSV 파일 경로 (이 스크립트 기준으로 ../Results/VPN_traffic.csv)
+    # CSV file path (relative to this script: ../Results/VPN_traffic.csv)
     base_dir = Path(__file__).resolve().parent
     csv_path = base_dir.parent / "Results" / "VPN_traffic.csv"
 
-    # 데이터 불러오기
+    # Avoid issues with minus sign rendering
+    mpl.rcParams["axes.unicode_minus"] = False
+
+    # Load data
     df = pd.read_csv(csv_path)
 
-    # 그래프 스타일 설정
+    # Plot style
     plt.style.use("ggplot")
 
     datasets = df["Dataset"]
 
-    # 막대 위치 설정
+    # Bar positions
     x = range(len(datasets))
     bar_width = 0.35
 
     fig, axes = plt.subplots(1, 2, figsize=(10, 4))
 
-    # ----- F1 Score 그래프 -----
+    # ----- F1 Score subplot -----
     ax_f1 = axes[0]
     ax_f1.bar(
         [i - bar_width / 2 for i in x],
@@ -39,13 +44,13 @@ def main():
         label="Snort + FlowSign",
         color="#55A868",
     )
-    ax_f1.set_title("F1 Score 비교")
+    ax_f1.set_title("F1 Score")
     ax_f1.set_xticks(list(x))
     ax_f1.set_xticklabels(datasets)
     ax_f1.set_ylabel("F1 Score (%)")
     ax_f1.legend()
 
-    # ----- Accuracy 그래프 -----
+    # ----- Accuracy subplot -----
     ax_acc = axes[1]
     ax_acc.bar(
         [i - bar_width / 2 for i in x],
@@ -61,20 +66,20 @@ def main():
         label="Snort + FlowSign",
         color="#8172B3",
     )
-    ax_acc.set_title("Accuracy 비교")
+    ax_acc.set_title("Accuracy")
     ax_acc.set_xticks(list(x))
     ax_acc.set_xticklabels(datasets)
     ax_acc.set_ylabel("Accuracy (%)")
     ax_acc.legend()
 
-    fig.suptitle("Snort vs Snort + FlowSign 성능 비교", fontsize=14, fontweight="bold")
+    fig.suptitle("Snort vs Snort + FlowSign Performance Comparison", fontsize=14, fontweight="bold")
     fig.tight_layout(rect=[0, 0.03, 1, 0.95])
 
-    # 출력 폴더 설정: ../Graph
+    # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
     os.makedirs(graph_dir, exist_ok=True)
 
-    # 이미지 파일로 저장 (예: ../Graph/vpn_traffic_performance.png)
+    # Save image (e.g., ../Graph/vpn_traffic_performance.png)
     output_path = graph_dir / "vpn_traffic_performance.png"
     plt.savefig(output_path, dpi=300)
 
