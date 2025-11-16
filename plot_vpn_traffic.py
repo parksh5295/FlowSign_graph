@@ -21,11 +21,13 @@ def main():
 
     # Bar positions
     x = range(len(datasets))
-    bar_width = 0.35
+    # Adjust bar width based on number of datasets
+    bar_width = 0.3 if len(datasets) > 2 else 0.35
 
     # A4 half-width size (A4 width = 8.27 inches, half = ~4 inches)
-    # Increase figure size to better accommodate text
-    fig, axes = plt.subplots(1, 2, figsize=(4, 4))
+    # Increase figure size to better accommodate text and more datasets
+    fig_width = 4.5 if len(datasets) > 2 else 4
+    fig, axes = plt.subplots(1, 2, figsize=(fig_width, 4))
     fig.patch.set_facecolor('white')
 
     # ----- F1 Score subplot -----
@@ -49,6 +51,7 @@ def main():
     ax_f1.set_xticks(list(x))
     ax_f1.set_xticklabels(datasets, fontsize=8)
     ax_f1.set_ylabel("F1 Score (%)", fontsize=9)
+    ax_f1.set_ylim(0, 100)
     ax_f1.tick_params(axis='y', labelsize=8)
     ax_f1.grid(True, alpha=0.3, linestyle='--')
 
@@ -73,6 +76,7 @@ def main():
     ax_acc.set_xticks(list(x))
     ax_acc.set_xticklabels(datasets, fontsize=8)
     ax_acc.set_ylabel("Accuracy (%)", fontsize=9)
+    ax_acc.set_ylim(0, 100)
     ax_acc.tick_params(axis='y', labelsize=8)
     ax_acc.grid(True, alpha=0.3, linestyle='--')
 
