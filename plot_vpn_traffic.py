@@ -17,63 +17,73 @@ def main():
     # Load data
     df = pd.read_csv(csv_path)
 
-    # Plot style
-    plt.style.use("ggplot")
-
     datasets = df["Dataset"]
 
     # Bar positions
     x = range(len(datasets))
     bar_width = 0.35
 
-    fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+    # A4 half-width size (considering up to 4 datasets)
+    fig, axes = plt.subplots(1, 2, figsize=(8, 4))
+    fig.patch.set_facecolor('white')
 
     # ----- F1 Score subplot -----
     ax_f1 = axes[0]
+    ax_f1.set_facecolor('white')
     ax_f1.bar(
         [i - bar_width / 2 for i in x],
         df["F1_snort"],
         width=bar_width,
         label="Snort",
-        color="#4C72B0",
+        color="#E74C3C",  # Red color for Snort
     )
     ax_f1.bar(
         [i + bar_width / 2 for i in x],
         df["F1_snort_FlowSign"],
         width=bar_width,
         label="Snort + FlowSign",
-        color="#55A868",
+        color="#27AE60",  # Green color for Snort + FlowSign
     )
     ax_f1.set_title("F1 Score")
     ax_f1.set_xticks(list(x))
     ax_f1.set_xticklabels(datasets)
     ax_f1.set_ylabel("F1 Score (%)")
-    ax_f1.legend()
+    ax_f1.grid(True, alpha=0.3, linestyle='--')
 
     # ----- Accuracy subplot -----
     ax_acc = axes[1]
+    ax_acc.set_facecolor('white')
     ax_acc.bar(
         [i - bar_width / 2 for i in x],
         df["Accuracy_snort"],
         width=bar_width,
         label="Snort",
-        color="#C44E52",
+        color="#E74C3C",  # Red color for Snort
     )
     ax_acc.bar(
         [i + bar_width / 2 for i in x],
         df["Accuracy_snort_FlowSign"],
         width=bar_width,
         label="Snort + FlowSign",
-        color="#8172B3",
+        color="#27AE60",  # Green color for Snort + FlowSign
     )
     ax_acc.set_title("Accuracy")
     ax_acc.set_xticks(list(x))
     ax_acc.set_xticklabels(datasets)
     ax_acc.set_ylabel("Accuracy (%)")
-    ax_acc.legend()
+    ax_acc.grid(True, alpha=0.3, linestyle='--')
+
+    # Add a single legend at the top center of the figure
+    # Get handles and labels from one of the subplots
+    handles, labels = ax_f1.get_legend_handles_labels()
+    fig.legend(handles, labels, 
+               loc='upper center', 
+               ncol=2, 
+               frameon=True,
+               bbox_to_anchor=(0.5, 0.98))
 
     fig.suptitle("Snort vs Snort + FlowSign Performance Comparison", fontsize=14, fontweight="bold")
-    fig.tight_layout(rect=[0, 0.03, 1, 0.95])
+    fig.tight_layout(rect=[0, 0.03, 1, 0.92])
 
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
