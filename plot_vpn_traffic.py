@@ -24,7 +24,8 @@ def main():
     bar_width = 0.35
 
     # A4 half-width size (A4 width = 8.27 inches, half = ~4 inches)
-    fig, axes = plt.subplots(1, 2, figsize=(4, 3))
+    # Increase figure size to better accommodate text
+    fig, axes = plt.subplots(1, 2, figsize=(4, 4))
     fig.patch.set_facecolor('white')
 
     # ----- F1 Score subplot -----
@@ -44,10 +45,11 @@ def main():
         label="Snort + FlowSign",
         color="#27AE60",  # Green color for Snort + FlowSign
     )
-    ax_f1.set_title("F1 Score")
+    ax_f1.set_title("F1 Score", fontsize=10)
     ax_f1.set_xticks(list(x))
-    ax_f1.set_xticklabels(datasets, rotation=15, ha='right')
-    ax_f1.set_ylabel("F1 Score (%)")
+    ax_f1.set_xticklabels(datasets, fontsize=8)
+    ax_f1.set_ylabel("F1 Score (%)", fontsize=9)
+    ax_f1.tick_params(axis='y', labelsize=8)
     ax_f1.grid(True, alpha=0.3, linestyle='--')
 
     # ----- Accuracy subplot -----
@@ -67,10 +69,11 @@ def main():
         label="Snort + FlowSign",
         color="#27AE60",  # Green color for Snort + FlowSign
     )
-    ax_acc.set_title("Accuracy")
+    ax_acc.set_title("Accuracy", fontsize=10)
     ax_acc.set_xticks(list(x))
-    ax_acc.set_xticklabels(datasets, rotation=15, ha='right')
-    ax_acc.set_ylabel("Accuracy (%)")
+    ax_acc.set_xticklabels(datasets, fontsize=8)
+    ax_acc.set_ylabel("Accuracy (%)", fontsize=9)
+    ax_acc.tick_params(axis='y', labelsize=8)
     ax_acc.grid(True, alpha=0.3, linestyle='--')
 
     # Add a single legend at the top center, above the graph area
@@ -80,6 +83,7 @@ def main():
                loc='upper center', 
                ncol=2, 
                frameon=True,
+               fontsize=9,
                bbox_to_anchor=(0.5, 1.0),
                bbox_transform=fig.transFigure)
     
