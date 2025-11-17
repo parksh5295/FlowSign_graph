@@ -27,7 +27,7 @@ def main():
     # A4 half-width size (A4 width = 8.27 inches, half = ~4 inches)
     # Increase figure size to better accommodate text and more datasets
     fig_width = 4.5 if len(datasets) > 2 else 4
-    fig, axes = plt.subplots(1, 2, figsize=(fig_width, 4))
+    fig, axes = plt.subplots(1, 2, figsize=(fig_width, 2))
     fig.patch.set_facecolor('white')
 
     # ----- F1 Score subplot -----
