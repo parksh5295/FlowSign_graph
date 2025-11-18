@@ -37,8 +37,9 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width):
     # Position for grouped bars (single group of 3 bars)
     x_center = 0.5
     
-    # Check if we need broken axis (max is more than 3x min and both > 0)
-    needs_break = max_val > 0 and min_val > 0 and max_val / min_val > 3
+    # Check if we need broken axis (only for Throughput, and if max is more than 3x min and both > 0)
+    needs_break = (metric_name == 'Throughput' and 
+                   max_val > 0 and min_val > 0 and max_val / min_val > 3)
     
     if needs_break:
         # Find threshold to split
@@ -116,9 +117,9 @@ def main():
     # Load result4.csv
     df = pd.read_csv(results_dir / "result4.csv")
     
-    # A4 half-width size, 3 subplots vertically
+    # A4 half-width size, 3 subplots horizontally
     # Increase figure size to accommodate 3x larger text
-    fig, axes = plt.subplots(3, 1, figsize=(24, 10.5))  # 3x width and height for 3x text
+    fig, axes = plt.subplots(1, 3, figsize=(36, 10.5))  # 3 subplots horizontally, 3x text
     fig.patch.set_facecolor('white')
     
     # Color scheme
@@ -131,7 +132,7 @@ def main():
     methods = ['Snort', 'Snort_Proposed', 'SoTA_ML']
     bar_width = 0.25
     
-    # Metric names and y-axis labels
+    # Metric names and y-axis labels (horizontal layout)
     metrics_info = [
         ('Avg_Processing_Time', 'Avg Processing Time (ms)', 0),
         ('p95_Latency', 'p95 Latency (ms)', 1),
