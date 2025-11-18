@@ -30,7 +30,7 @@ def main():
     # A4 half-width size (A4 width = 8.27 inches, half = ~4 inches)
     # Increase figure size to accommodate larger text (similar to paper body text)
     fig_width = 36 if len(datasets) > 2 else 33  # Wider for larger text
-    fig, axes = plt.subplots(1, 2, figsize=(fig_width, 10.8))  # Height reduced to 80% (13.5 * 0.8)
+    fig, axes = plt.subplots(1, 2, figsize=(fig_width, 13.5))  # Height reduced to 80% (13.5 * 0.8)
     fig.patch.set_facecolor('white')
 
     # ----- F1 Score subplot -----
@@ -128,7 +128,7 @@ def main():
     # 높이가 80%로 줄어들었으므로 위쪽 여백 절대 크기 유지를 위해 top 값 조정
     # 원래: 높이 13.5, top=0.868 → 위쪽 여백 약 1.78
     # 현재: 높이 10.8, 같은 여백 유지 → top = 1 - (1.78/10.8) = 0.835
-    fig.tight_layout(rect=[0, 0.01, 1, 0.829])
+    fig.tight_layout(rect=[0, 0.01, 1, 0.835])
 
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
