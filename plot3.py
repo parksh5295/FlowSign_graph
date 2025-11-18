@@ -416,7 +416,7 @@ def main():
     
     # Match plot4.py's figure size and layout
     fig_width = 36  # Same as plot4.py
-    fig, axes = plt.subplots(1, 3, figsize=(fig_width, 13.5))  # Height reduced to 75%
+    fig, axes = plt.subplots(1, 3, figsize=(fig_width, 18))  # Height reduced to 75%
     fig.patch.set_facecolor('white')
     
     # Color scheme - unified dark colors
@@ -532,7 +532,7 @@ def main():
     # 높이가 75%로 줄어들었으므로 위쪽 여백 절대 크기 유지를 위해 top 값 조정
     # 원래: 높이 18, top=0.80 → 위쪽 여백 3.6
     # 현재: 높이 13.5, 같은 여백 유지 → top = 1 - (3.6/13.5) = 0.733
-    fig.tight_layout(rect=[0.02, 0.01, 1, 0.733])
+    fig.tight_layout(rect=[0.02, 0.01, 1, 0.8])
     
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
