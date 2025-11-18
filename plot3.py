@@ -141,9 +141,14 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
             add_break_symbol(ax, break_position, x_center=0.5, width=1.4)
             ax.spines['top'].set_visible(True)
             
-            # Set ticks
-            all_ticks = lower_tick_positions + high_tick_positions
-            all_tick_labels = [f'{int(t)}' for t in lower_ticks] + [f'{int(t)}' for t in high_tick_values]
+            # Set ticks (only 2 ticks per range)
+            lower_ticks_filtered = [lower_ticks[0], lower_ticks[-1]] if len(lower_ticks) > 2 else lower_ticks
+            lower_tick_positions_filtered = [lower_tick_positions[0], lower_tick_positions[-1]] if len(lower_tick_positions) > 2 else lower_tick_positions
+            high_tick_values_filtered = [high_tick_values[0], high_tick_values[-1]] if len(high_tick_values) > 2 else high_tick_values
+            high_tick_positions_filtered = [high_tick_positions[0], high_tick_positions[-1]] if len(high_tick_positions) > 2 else high_tick_positions
+            
+            all_ticks = lower_tick_positions_filtered + high_tick_positions_filtered
+            all_tick_labels = [f'{int(t)}' for t in lower_ticks_filtered] + [f'{int(t)}' for t in high_tick_values_filtered]
             ax.set_yticks(all_ticks)
             ax.set_yticklabels(all_tick_labels, fontsize=72)
             ax.set_ylim(0, 35)
@@ -207,9 +212,14 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
             add_break_symbol(ax, break_position, x_center=0.5, width=1.4)
             ax.spines['top'].set_visible(True)
             
-            # Set ticks
-            all_ticks = lower_tick_positions + high_tick_positions
-            all_tick_labels = [f'{int(t)}' for t in lower_ticks] + [f'{int(t)}' for t in high_tick_values]
+            # Set ticks (only 2 ticks per range)
+            lower_ticks_filtered = [lower_ticks[0], lower_ticks[-1]] if len(lower_ticks) > 2 else lower_ticks
+            lower_tick_positions_filtered = [lower_tick_positions[0], lower_tick_positions[-1]] if len(lower_tick_positions) > 2 else lower_tick_positions
+            high_tick_values_filtered = [high_tick_values[0], high_tick_values[-1]] if len(high_tick_values) > 2 else high_tick_values
+            high_tick_positions_filtered = [high_tick_positions[0], high_tick_positions[-1]] if len(high_tick_positions) > 2 else high_tick_positions
+            
+            all_ticks = lower_tick_positions_filtered + high_tick_positions_filtered
+            all_tick_labels = [f'{int(t)}' for t in lower_ticks_filtered] + [f'{int(t)}' for t in high_tick_values_filtered]
             ax.set_yticks(all_ticks)
             ax.set_yticklabels(all_tick_labels, fontsize=72)
             ax.set_ylim(0, 36)
@@ -313,16 +323,24 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
                 add_break_symbol(ax, break2_position, x_center=0.5, width=1.4)
             ax.spines['top'].set_visible(True)
             
-            # Set ticks
+            # Set ticks (only 2 ticks per range)
+            lower_ticks_filtered = [lower_ticks[0], lower_ticks[-1]] if len(lower_ticks) > 2 else lower_ticks
+            lower_tick_positions_filtered = [lower_tick_positions[0], lower_tick_positions[-1]] if len(lower_tick_positions) > 2 else lower_tick_positions
+            high_tick_values_filtered = [high_tick_values[0], high_tick_values[-1]] if len(high_tick_values) > 2 else high_tick_values
+            high_tick_positions_filtered = [high_tick_positions[0], high_tick_positions[-1]] if len(high_tick_positions) > 2 else high_tick_positions
+            
             if bae_max_val:
-                all_ticks = lower_tick_positions + high_tick_positions + super_high_tick_positions
-                all_tick_labels = ([f'{int(t)}' for t in lower_ticks] + 
-                                 [f'{int(t)}' for t in high_tick_values] + 
-                                 [f'{int(t)}' for t in super_high_tick_values])
+                super_high_tick_values_filtered = [super_high_tick_values[0], super_high_tick_values[-1]] if len(super_high_tick_values) > 2 else super_high_tick_values
+                super_high_tick_positions_filtered = [super_high_tick_positions[0], super_high_tick_positions[-1]] if len(super_high_tick_positions) > 2 else super_high_tick_positions
+                
+                all_ticks = lower_tick_positions_filtered + high_tick_positions_filtered + super_high_tick_positions_filtered
+                all_tick_labels = ([f'{int(t)}' for t in lower_ticks_filtered] + 
+                                 [f'{int(t)}' for t in high_tick_values_filtered] + 
+                                 [f'{int(t)}' for t in super_high_tick_values_filtered])
                 ax.set_ylim(0, 51)
             else:
-                all_ticks = lower_tick_positions + high_tick_positions
-                all_tick_labels = [f'{int(t)}' for t in lower_ticks] + [f'{int(t)}' for t in high_tick_values]
+                all_ticks = lower_tick_positions_filtered + high_tick_positions_filtered
+                all_tick_labels = [f'{int(t)}' for t in lower_ticks_filtered] + [f'{int(t)}' for t in high_tick_values_filtered]
                 ax.set_ylim(0, 36)
             ax.set_yticks(all_ticks)
             ax.set_yticklabels(all_tick_labels, fontsize=72)
@@ -485,7 +503,7 @@ def main():
                             ncol=1,
                             frameon=True,
                             fontsize=76,
-                            bbox_to_anchor=(0.5, 1.00),
+                            bbox_to_anchor=(0.5, 0.97),
                             bbox_transform=fig.transFigure)
     else:
         fig.legend(all_handles, all_labels,
@@ -496,7 +514,7 @@ def main():
                    bbox_to_anchor=(0.5, 1.06),
                    bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0.02, 0.01, 1, 0.85])  # Reduced top margin to prevent overlap
+    fig.tight_layout(rect=[0.02, 0.01, 1, 0.82])  # Further reduced top margin to prevent overlap with legends
     
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
