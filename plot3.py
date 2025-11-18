@@ -501,24 +501,24 @@ def main():
             method_labels.append(label)
     
     # Create legend in 2 rows: methods on top, Max below
-    # 범례1-범례2-그래프가 겹침 없이, 여백도 거의 없이 배열되도록
+    # 위쪽 여백을 범례 2개가 들어갈 수 있을 만큼 키워서 범례 2개를 배열
     if max_handle:
-        # First row: methods (higher up)
+        # First row: methods (higher up) - 원래대로 되돌림
         legend1 = fig.legend(method_handles, method_labels,
                             loc='upper center',
                             ncol=len(method_handles),
                             frameon=True,
                             fontsize=76,
-                            bbox_to_anchor=(0.5, 1.0),
+                            bbox_to_anchor=(0.5, 1.06),
                             bbox_transform=fig.transFigure)
         
-        # Second row: Max (lower, 바로 아래)
+        # Second row: Max (lower) - 원래대로 되돌림
         legend2 = fig.legend([max_handle], [max_label],
                             loc='upper center',
                             ncol=1,
                             frameon=True,
                             fontsize=76,
-                            bbox_to_anchor=(0.5, 0.95),
+                            bbox_to_anchor=(0.5, 0.97),
                             bbox_transform=fig.transFigure)
     else:
         fig.legend(all_handles, all_labels,
@@ -526,10 +526,11 @@ def main():
                    ncol=len(all_handles),
                    frameon=True,
                    fontsize=76,
-                   bbox_to_anchor=(0.5, 1.0),
+                   bbox_to_anchor=(0.5, 1.06),
                    bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0.02, 0.01, 1, 0.90])  # 범례와 그래프 사이 여백 최소화
+    # 위쪽 여백을 범례 2개가 들어갈 수 있을 만큼 키움
+    fig.tight_layout(rect=[0.02, 0.01, 1, 0.85])  # 위쪽 여백 확대
     
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
