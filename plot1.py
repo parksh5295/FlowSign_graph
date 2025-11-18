@@ -26,8 +26,8 @@ def main():
 
     # A4 half-width size (A4 width = 8.27 inches, half = ~4 inches)
     # Increase figure size to accommodate larger text (similar to paper body text)
-    fig_width = 30 if len(datasets) > 2 else 27  # Wider for larger text
-    fig, axes = plt.subplots(1, 2, figsize=(fig_width, 14))  # Taller for larger text
+    fig_width = 36 if len(datasets) > 2 else 33  # Wider for larger text
+    fig, axes = plt.subplots(1, 2, figsize=(fig_width, 16))  # Taller for larger text
     fig.patch.set_facecolor('white')
 
     # ----- F1 Score subplot -----
@@ -47,12 +47,12 @@ def main():
         label="Snort + FlowSign",
         color="#229954",  # Dark Green for Snort + FlowSign
     )
-    ax_f1.set_title("F1 Score", fontsize=36)
+    ax_f1.set_title("F1 Score", fontsize=44)
     ax_f1.set_xticks(list(x))
-    ax_f1.set_xticklabels(datasets, fontsize=32, rotation=90, ha='center')
-    ax_f1.set_ylabel("F1 Score (%)", fontsize=34)
+    ax_f1.set_xticklabels(datasets, fontsize=40, rotation=90, ha='center')
+    ax_f1.set_ylabel("F1 Score (%)", fontsize=42)
     ax_f1.set_ylim(0, 100)
-    ax_f1.tick_params(axis='y', labelsize=30)
+    ax_f1.tick_params(axis='y', labelsize=38)
     ax_f1.grid(True, alpha=0.3, linestyle='--')
 
     # ----- Accuracy subplot -----
@@ -72,12 +72,12 @@ def main():
         label="Snort + FlowSign",
         color="#229954",  # Dark Green for Snort + FlowSign
     )
-    ax_acc.set_title("Accuracy", fontsize=36)
+    ax_acc.set_title("Accuracy", fontsize=44)
     ax_acc.set_xticks(list(x))
-    ax_acc.set_xticklabels(datasets, fontsize=32, rotation=90, ha='center')
-    ax_acc.set_ylabel("Accuracy (%)", fontsize=34)
+    ax_acc.set_xticklabels(datasets, fontsize=40, rotation=90, ha='center')
+    ax_acc.set_ylabel("Accuracy (%)", fontsize=42)
     ax_acc.set_ylim(0, 100)
-    ax_acc.tick_params(axis='y', labelsize=30)
+    ax_acc.tick_params(axis='y', labelsize=38)
     ax_acc.grid(True, alpha=0.3, linestyle='--')
 
     # Add a single legend at the top center, above the graph area
@@ -87,11 +87,11 @@ def main():
                loc='upper center', 
                ncol=2, 
                frameon=True,
-               fontsize=34,
+               fontsize=42,
                bbox_to_anchor=(0.5, 1.0),
                bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0, 0.03, 1, 0.96])
+    fig.tight_layout(rect=[0, 0.04, 1, 0.97])
 
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
