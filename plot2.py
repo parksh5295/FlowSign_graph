@@ -138,6 +138,7 @@ def main():
         
         # Add break symbol (across the entire x-axis range - one long wavy line)
         # 전체 x축에 걸쳐 하나의 긴 물결을 그림
+        # [길이 조정] x_min, x_max 값을 조정하여 물결 길이 변경 (더 길게: 범위 확대)
         x_min = -0.5
         x_max = len(metrics) - 0.5
         x_center = (x_min + x_max) / 2
@@ -168,14 +169,15 @@ def main():
         ax.add_patch(poly)
         
         # Draw the two wavy lines
-        ax.plot(x_data, y_data1, 'k-', linewidth=3, clip_on=False, zorder=15)
-        ax.plot(x_data, y_data2, 'k-', linewidth=3, clip_on=False, zorder=15)
+        # [두께 조정] linewidth 값을 조정하여 물결 두께 변경 (더 두껍게: 값 증가)
+        ax.plot(x_data, y_data1, 'k-', linewidth=5, clip_on=False, zorder=15)  # linewidth=3 -> 5로 증가
+        ax.plot(x_data, y_data2, 'k-', linewidth=5, clip_on=False, zorder=15)  # linewidth=3 -> 5로 증가
         
         # Add small vertical lines at ends
         ax.plot([x_data[0], x_data[0]], [y_data1[0], y_data2[0]], 
-                'k-', linewidth=3, clip_on=False, zorder=15)
+                'k-', linewidth=7, clip_on=False, zorder=15)  # linewidth=3 -> 5로 증가
         ax.plot([x_data[-1], x_data[-1]], [y_data1[-1], y_data2[-1]], 
-                'k-', linewidth=3, clip_on=False, zorder=15)
+                'k-', linewidth=7, clip_on=False, zorder=15)  # linewidth=3 -> 5로 증가
         
         ax.spines['top'].set_visible(True)
         
