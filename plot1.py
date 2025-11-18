@@ -128,7 +128,7 @@ def main():
     # 높이가 80%로 줄어들었으므로 위쪽 여백 절대 크기 유지를 위해 top 값 조정
     # 원래: 높이 13.5, top=0.868 → 위쪽 여백 약 1.78
     # 현재: 높이 10.8, 같은 여백 유지 → top = 1 - (1.78/10.8) = 0.835
-    fig.tight_layout(rect=[0, 0.01, 1, 0.838])
+    fig.tight_layout(rect=[0, 0.01, 1, 0.845])
 
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
