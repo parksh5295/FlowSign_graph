@@ -88,10 +88,10 @@ def main():
                ncol=2, 
                frameon=True,
                fontsize=82,
-               bbox_to_anchor=(0.5, 1.06),
+               bbox_to_anchor=(0.5, 1.02),
                bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0, 0.09, 1, 0.92])
+    fig.tight_layout(rect=[0, 0.09, 1, 0.95])
 
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
