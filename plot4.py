@@ -431,7 +431,7 @@ def main():
         'Snort_Proposed': 'Snort + FlowSign',
         'SoTA_ML': 'SoTA ML'
     }
-    bar_width = 0.25
+    bar_width = 0.4  # Wider bars to fill the graph area
     
     # Metric names and y-axis labels (horizontal layout)
     metrics_info = [
@@ -489,7 +489,7 @@ def main():
                bbox_to_anchor=(0.5, 1.03),  # Match plot1.py
                bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0, 0.05, 1, 0.90])  # Reduced bottom margin
+    fig.tight_layout(rect=[0, 0.02, 1, 0.90])  # Further reduced bottom margin
     
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
