@@ -67,7 +67,7 @@ def plot_single_result(df, title, output_path):
                bbox_to_anchor=(0.5, 1.03),  # Match plot1.py
                bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0, 0.09, 1, 0.90])  # Match plot1.py
+    fig.tight_layout(rect=[0, 0.01, 1, 0.90])  # Match plot1.py
     
     # Save image
     plt.savefig(output_path, dpi=300)
