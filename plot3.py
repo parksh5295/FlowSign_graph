@@ -191,7 +191,7 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
             scaled_max = 27 + (bae_max_val - high_tick_values[0]) / (high_tick_values[-1] - high_tick_values[0]) * 6
             x_start = positions[bae_idx] - bar_width / 2
             x_end = positions[bae_idx] + bar_width / 2
-            ax.plot([x_start, x_end], [scaled_max, scaled_max], 'r--', linewidth=4, 
+            ax.plot([x_start, x_end], [scaled_max, scaled_max], 'r--', linewidth=6, 
                    label='Max' if metric_mean_name == 'CPU_Mean(%)' else '', zorder=10)
             
             # Plot other max values in low range
@@ -201,7 +201,7 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
                     y_pos = (max_val / low_max) * low_range_end_pos if low_max > 0 else 0
                     x_start = positions[i] - bar_width / 2
                     x_end = positions[i] + bar_width / 2
-                    ax.plot([x_start, x_end], [y_pos, y_pos], 'r--', linewidth=4, zorder=10)
+                    ax.plot([x_start, x_end], [y_pos, y_pos], 'r--', linewidth=6, zorder=10)
             
             # Add break symbol
             add_break_symbol(ax, break_position, x_center=0.5, width=1.4)
@@ -224,7 +224,7 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
                 if max_values[i] is not None:
                     x_start = positions[i] - bar_width / 2
                     x_end = positions[i] + bar_width / 2
-                    ax.plot([x_start, x_end], [max_values[i], max_values[i]], 'r--', linewidth=4, 
+                    ax.plot([x_start, x_end], [max_values[i], max_values[i]], 'r--', linewidth=6, 
                            label='Max' if i == 0 and metric_mean_name == 'CPU_Mean(%)' else '', zorder=10)
             ax.set_ylim(0, max(max(mean_values), max([v for v in max_values if v is not None])) * 1.15)
             ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{int(x)}'))
@@ -289,7 +289,7 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
                 y_pos = (val / low_max) * low_range_end_pos if low_max > 0 else 0
                 x_start = pos - bar_width / 2
                 x_end = pos + bar_width / 2
-                ax.plot([x_start, x_end], [y_pos, y_pos], 'r--', linewidth=4, zorder=10)
+                ax.plot([x_start, x_end], [y_pos, y_pos], 'r--', linewidth=6, zorder=10)
             
             # Plot BAE mean in high range
             scaled_bae_mean = 27 + (bae_mean_val - high_tick_values[0]) / (high_tick_values[-1] - high_tick_values[0]) * 6
@@ -304,7 +304,7 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
                 scaled_bae_max = 42 + (bae_max_val - super_high_tick_values[0]) / (super_high_tick_values[-1] - super_high_tick_values[0]) * 6
                 x_start = bae_mean_pos - bar_width / 2
                 x_end = bae_mean_pos + bar_width / 2
-                ax.plot([x_start, x_end], [scaled_bae_max, scaled_bae_max], 'r--', linewidth=4, 
+                ax.plot([x_start, x_end], [scaled_bae_max, scaled_bae_max], 'r--', linewidth=6, 
                        label='Max' if metric_mean_name == 'Memory_Mean(MB)' else '', zorder=10)
             
             # Add break symbols
@@ -337,7 +337,7 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
                 if max_values[i] is not None:
                     x_start = positions[i] - bar_width / 2
                     x_end = positions[i] + bar_width / 2
-                    ax.plot([x_start, x_end], [max_values[i], max_values[i]], 'r--', linewidth=4, 
+                    ax.plot([x_start, x_end], [max_values[i], max_values[i]], 'r--', linewidth=6, 
                            label='Max' if i == 0 and metric_mean_name == 'Memory_Mean(MB)' else '', zorder=10)
             ax.set_ylim(0, max(max(mean_values), max([v for v in max_values if v is not None])) * 1.15)
             ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{int(x)}'))
@@ -353,7 +353,7 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
             if max_values[i] is not None:
                 x_start = positions[i] - bar_width / 2
                 x_end = positions[i] + bar_width / 2
-                ax.plot([x_start, x_end], [max_values[i], max_values[i]], 'r--', linewidth=4, 
+                ax.plot([x_start, x_end], [max_values[i], max_values[i]], 'r--', linewidth=6, 
                        label='Max' if i == 0 and metric_mean_name == 'Duration(s)' else '', zorder=10)
         ax.set_ylim(0, max(max(mean_values), max([v for v in max_values if v is not None] or [0])) * 1.15)
         ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{int(x)}'))
@@ -470,22 +470,22 @@ def main():
     
     # Create legend in 2 rows: methods on top, Max below
     if max_handle:
-        # First row: methods
+        # First row: methods (higher up)
         legend1 = fig.legend(method_handles, method_labels,
                             loc='upper center',
                             ncol=len(method_handles),
                             frameon=True,
                             fontsize=76,
-                            bbox_to_anchor=(0.5, 1.03),
+                            bbox_to_anchor=(0.5, 1.06),
                             bbox_transform=fig.transFigure)
         
-        # Second row: Max (slightly lower)
+        # Second row: Max (lower, with more spacing)
         legend2 = fig.legend([max_handle], [max_label],
                             loc='upper center',
                             ncol=1,
                             frameon=True,
                             fontsize=76,
-                            bbox_to_anchor=(0.5, 0.98),
+                            bbox_to_anchor=(0.5, 1.00),
                             bbox_transform=fig.transFigure)
     else:
         fig.legend(all_handles, all_labels,
@@ -493,10 +493,10 @@ def main():
                    ncol=len(all_handles),
                    frameon=True,
                    fontsize=76,
-                   bbox_to_anchor=(0.5, 1.03),
+                   bbox_to_anchor=(0.5, 1.06),
                    bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0.02, 0.01, 1, 0.90])  # Match plot4.py
+    fig.tight_layout(rect=[0.02, 0.01, 1, 0.85])  # Reduced top margin to prevent overlap
     
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
