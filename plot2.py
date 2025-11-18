@@ -117,6 +117,9 @@ def main():
         high_start = 27
         break_position = (low_range_end_pos + high_start) / 2
         
+        # 그래프의 x축 범위를 먼저 고정하여 막대 위치가 변하지 않도록 함
+        ax.set_xlim(-0.5, len(metrics) - 0.5)
+        
         # Plot bars with broken axis
         for metric_idx, metric in enumerate(metrics):
             metric_df = df[df['Metric'] == metric]
@@ -142,8 +145,9 @@ def main():
         # x_data = np.linspace(x_min, x_max, 500)로 물결을 그리므로, 이 값들이 물결의 좌우 범위를 결정합니다
         # 더 넓게: x_min을 더 작게, x_max를 더 크게 설정
         # 더 좁게: x_min을 더 크게, x_max를 더 작게 설정
-        x_min = -1.0  # 좌측으로 더 넓히기 위해 -0.5에서 -1.0으로 변경
-        x_max = len(metrics) + 0.5  # 우측으로 더 넓히기 위해 len(metrics) - 0.5에서 len(metrics) + 0.5로 변경
+        # 주의: x축 범위는 이미 고정되어 있으므로, 물결만 그래프 영역 밖으로 확장됩니다 (clip_on=False)
+        x_min = -0.5  # 좌측으로 더 넓히기 위해 -0.5에서 -1.0으로 변경
+        x_max = len(metrics) - 0.5  # 우측으로 더 넓히기 위해 len(metrics) - 0.5에서 len(metrics) + 0.5로 변경
         x_center = (x_min + x_max) / 2
         width = x_max - x_min + 0.5  # 전체 x축 범위 + 여유
         
