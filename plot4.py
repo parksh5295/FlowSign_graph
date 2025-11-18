@@ -111,22 +111,11 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
             ax.text(pos, val + 0.5, f'{val:.1f}',
                    ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
         
-        # Set y-axis to show lower range (0-35) - keep Snort/Snort+FlowSign position fixed
-        # SoTA ML will appear lower relative to the fixed high values
-        ax.set_ylim(0, 35)
-        
         # Find the middle point between SoTA ML (low values) and Snort/Snort+FlowSign (high values)
         # SoTA ML max is around 15, high values start at 27, so middle is around 21
         sota_ml_max = max(low_values) if low_values else 15
         high_start = 27  # Where high values start
         break_position = (sota_ml_max + high_start) / 2  # Middle position
-        
-        # Add break symbol at middle position between SoTA ML and high values
-        # x-axis range is -0.2 to 1.2, so keep width within this range
-        add_break_symbol(ax, break_position, x_center=0.5, width=1.0)
-        
-        # Keep top spine visible but it will be covered by the break symbol
-        ax.spines['top'].set_visible(True)
         
         # Set y-axis ticks for lower range
         # Add high value ticks above the break (370-400 range) on the left y-axis
@@ -137,13 +126,27 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
         # Start from high_min rounded to nearest 5, then add 5, 10, 15, 20
         start_tick = int(np.ceil(high_min / 5) * 5)  # Round up to nearest 5
         high_tick_values = [start_tick + i * 5 for i in range(5) if start_tick + i * 5 <= int(high_max)]
-        # Map to y-axis positions (27-32 range) with EQUAL spacing (not proportional)
-        # Use 5 equal intervals: 27, 28, 29, 30, 31, 32
+        
+        # Map to y-axis positions with SAME VISUAL SPACING as lower ticks
+        # Lower ticks: 0, 5, 10, 15 are spaced 5 units apart visually
+        # Upper ticks should also be spaced 5 units apart visually (not compressed)
         num_ticks = len(high_tick_values)
         if num_ticks > 1:
-            high_tick_positions = np.linspace(27, 32, num_ticks).tolist()
+            # Use 27 to 27 + (num_ticks-1)*5 to maintain 5-unit visual spacing
+            high_tick_positions = [27 + i * 5 for i in range(num_ticks)]
         else:
             high_tick_positions = [27 + (t - high_min) / (high_max - high_min) * 5 for t in high_tick_values]
+        
+        # Set y-axis range to accommodate upper ticks with 5-unit spacing
+        y_max = 27 + (num_ticks - 1) * 5 + 3 if num_ticks > 1 else 35  # Add some padding at top
+        ax.set_ylim(0, y_max)
+        
+        # Add break symbol at middle position between SoTA ML and high values
+        # x-axis range is -0.2 to 1.2, so keep width within this range
+        add_break_symbol(ax, break_position, x_center=0.5, width=1.0)
+        
+        # Keep top spine visible but it will be covered by the break symbol
+        ax.spines['top'].set_visible(True)
         
         # Combine lower and upper ticks (gap between 15 and 27 shows the break)
         all_ticks = lower_ticks + high_tick_positions
@@ -255,10 +258,13 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
                 # Map from [high_min, high_max] to [high_start, high_start + 5]
                 for (method, orig_i), pos, val in zip(high_methods, high_positions, high_values):
                     scaled_val = high_start + (val - high_min) / (high_max - high_min) * (y_max - high_start - 1)
+                    # Add label for legend (only for first metric to avoid duplicates)
+                    label_text = method_display_names.get(method, method.replace('_', ' ')) if metric_name == 'Avg_Processing_Time' else ''
                     ax.bar(
                         pos,
                         scaled_val,
                         width=bar_width,
+                        label=label_text,
                         color=colors[method],
                         alpha=0.7
                     )
