@@ -495,7 +495,7 @@ def main():
                bbox_to_anchor=(0.5, 1.03),  # Match plot1.py
                bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0, 0.01, 1, 0.90])  # Minimized bottom margin
+    fig.tight_layout(rect=[0.02, 0.01, 1, 0.90])  # Increased left margin
     
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
