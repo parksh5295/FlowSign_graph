@@ -495,7 +495,10 @@ def main():
                bbox_to_anchor=(0.5, 1.03),  # Match plot1.py
                bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0.02, 0.01, 1, 0.90])  # Increased left margin
+    # 높이가 75%로 줄어들었으므로 위쪽 여백 절대 크기 유지를 위해 top 값 조정
+    # 원래: 높이 18, top=0.90 → 위쪽 여백 1.8
+    # 현재: 높이 13.5, 같은 여백 유지 → top = 1 - (1.8/13.5) = 0.867
+    fig.tight_layout(rect=[0.02, 0.01, 1, 0.867])
     
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
