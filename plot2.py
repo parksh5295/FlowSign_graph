@@ -193,9 +193,10 @@ def main():
         ax.set_yticklabels(all_tick_labels, fontsize=78)
         
         # x축 레이블을 그래프 위에 표시 (ylim 설정 후)
+        y_max = ax.get_ylim()[1]
         for i, metric in enumerate(metrics):
-            ax.text(i, ax.get_ylim()[1] * 1.05, f'{metric} (%)', 
-                   ha='center', va='bottom', fontsize=80, transform=ax.get_xaxis_transform())
+            ax.text(i, y_max * 1.05, f'{metric} (%)', 
+                   ha='center', va='bottom', fontsize=80, transform=ax.transData)
         # 기존 x축 레이블 숨기기
         ax.set_xticklabels([''] * len(metrics))
         
@@ -239,9 +240,10 @@ def main():
         ax.set_ylim(current_ylim[0], current_ylim[1] * 1.1)  # 10% 여유 공간 추가
         
         # x축 레이블을 그래프 위에 표시 (ylim 설정 후)
+        y_max = ax.get_ylim()[1]
         for i, metric in enumerate(metrics):
-            ax.text(i, ax.get_ylim()[1] * 1.05, f'{metric} (%)', 
-                   ha='center', va='bottom', fontsize=80, transform=ax.get_xaxis_transform())
+            ax.text(i, y_max * 1.05, f'{metric} (%)', 
+                   ha='center', va='bottom', fontsize=80, transform=ax.transData)
         # 기존 x축 레이블 숨기기
         ax.set_xticklabels([''] * len(metrics))
     
@@ -249,9 +251,10 @@ def main():
     # broken axis가 없는 경우에도 x축 레이블을 그래프 위에 표시
     if not needs_break:
         # x축 레이블을 그래프 위에 표시 (ylim 설정 후)
+        y_max = ax.get_ylim()[1]
         for i, metric in enumerate(metrics):
-            ax.text(i, ax.get_ylim()[1] * 1.05, f'{metric} (%)', 
-                   ha='center', va='bottom', fontsize=80, transform=ax.get_xaxis_transform())
+            ax.text(i, y_max * 1.05, f'{metric} (%)', 
+                   ha='center', va='bottom', fontsize=80, transform=ax.transData)
         # 기존 x축 레이블 숨기기
         ax.set_xticklabels([''] * len(metrics))
     
