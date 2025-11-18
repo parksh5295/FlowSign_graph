@@ -27,7 +27,7 @@ def main():
     # A4 half-width size (A4 width = 8.27 inches, half = ~4 inches)
     # Increase figure size to accommodate larger text (similar to paper body text)
     fig_width = 36 if len(datasets) > 2 else 33  # Wider for larger text
-    fig, axes = plt.subplots(1, 2, figsize=(fig_width, 24))  # Taller for larger text
+    fig, axes = plt.subplots(1, 2, figsize=(fig_width, 22))  # Taller for larger text
     fig.patch.set_facecolor('white')
 
     # ----- F1 Score subplot -----
@@ -91,7 +91,7 @@ def main():
                bbox_to_anchor=(0.5, 1.05),
                bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0, 0.09, 1, 0.95])
+    fig.tight_layout(rect=[0, 0.09, 1, 0.93])
 
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
