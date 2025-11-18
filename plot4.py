@@ -109,9 +109,9 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
             ax.text(pos, val + 0.5, f'{val:.1f}',
                    ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
         
-        # Set y-axis to show lower range (0-20) - keep Snort/Snort+FlowSign position fixed
+        # Set y-axis to show lower range (0-35) - keep Snort/Snort+FlowSign position fixed
         # SoTA ML will appear lower relative to the fixed high values
-        ax.set_ylim(0, 20)
+        ax.set_ylim(0, 35)
         
         # Add break symbol at top of lower range
         # x-axis range is -0.2 to 1.2, so keep width within this range
@@ -136,8 +136,9 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
                 color=colors[method],
                 alpha=0.7
             )
-            # Add text annotation with actual value
-            ax.text(pos, 19.5, f'{val:.1f}',
+            # Add text annotation with actual value (similar spacing to SoTA ML)
+            # SoTA ML uses val + 0.5, so use scaled_val + 0.5 for similar spacing
+            ax.text(pos, scaled_val + 0.5, f'{val:.1f}',
                    ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
     else:
         # Plot normally (for Avg_Processing_Time and p95_Latency)
