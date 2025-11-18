@@ -7,25 +7,29 @@ import matplotlib as mpl
 import pandas as pd
 
 
-def add_break_symbol(ax, y_break_pos, x_center=0.5, width=0.3):
-    """Add a wavy break symbol (~~~~) to indicate axis break at y position."""
-    # Convert y position to axes coordinates (0-1)
-    y_ax = (y_break_pos - ax.get_ylim()[0]) / (ax.get_ylim()[1] - ax.get_ylim()[0])
+def add_break_symbol(ax, y_break_pos, x_center=0.5, width=1.5):
+    """Add a double wavy break symbol (~~~~) to indicate axis break at y position."""
+    # Create two wavy lines (double line)
+    x_data = np.linspace(x_center - width/2, x_center + width/2, 100)
+    y_range = ax.get_ylim()[1] - ax.get_ylim()[0]
     
-    # Create wavy line in data coordinates
-    x_data = np.linspace(x_center - width/2, x_center + width/2, 50)
-    y_data = y_break_pos + 0.01 * (ax.get_ylim()[1] - ax.get_ylim()[0]) * np.sin(15 * np.pi * (x_data - (x_center - width/2)) / width)
+    # First wavy line
+    y_data1 = y_break_pos + 0.01 * y_range * np.sin(15 * np.pi * (x_data - (x_center - width/2)) / width)
+    ax.plot(x_data, y_data1, 'k-', linewidth=3, clip_on=False, zorder=10)
     
-    ax.plot(x_data, y_data, 'k-', linewidth=2, clip_on=False, zorder=10)
+    # Second wavy line (slightly offset)
+    y_data2 = y_break_pos + 0.015 * y_range * np.sin(15 * np.pi * (x_data - (x_center - width/2)) / width)
+    ax.plot(x_data, y_data2, 'k-', linewidth=3, clip_on=False, zorder=10)
+    
     # Add small vertical lines at ends
     ax.plot([x_center - width/2, x_center - width/2], 
-            [y_break_pos - 0.005 * (ax.get_ylim()[1] - ax.get_ylim()[0]), 
-             y_break_pos + 0.005 * (ax.get_ylim()[1] - ax.get_ylim()[0])], 
-            'k-', linewidth=2, clip_on=False, zorder=10)
+            [y_break_pos - 0.008 * y_range, 
+             y_break_pos + 0.008 * y_range], 
+            'k-', linewidth=3, clip_on=False, zorder=10)
     ax.plot([x_center + width/2, x_center + width/2], 
-            [y_break_pos - 0.005 * (ax.get_ylim()[1] - ax.get_ylim()[0]), 
-             y_break_pos + 0.005 * (ax.get_ylim()[1] - ax.get_ylim()[0])], 
-            'k-', linewidth=2, clip_on=False, zorder=10)
+            [y_break_pos - 0.008 * y_range, 
+             y_break_pos + 0.008 * y_range], 
+            'k-', linewidth=3, clip_on=False, zorder=10)
 
 
 def plot_metric(ax, df, metric_name, methods, colors, bar_width):
@@ -42,52 +46,89 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width):
                    max_val > 0 and min_val > 0 and max_val / min_val > 3)
     
     if needs_break:
-        # Find threshold to split
-        sorted_vals = sorted(values)
-        # Find gap
-        gap_idx = 0
-        for i in range(len(sorted_vals) - 1):
-            if sorted_vals[i+1] / sorted_vals[i] > 2:
-                gap_idx = i
-                break
-        
-        threshold = sorted_vals[gap_idx + 1] * 0.5 if gap_idx < len(sorted_vals) - 1 else max_val * 0.3
-        low_max = max([v for v in values if v <= threshold])
-        high_min = min([v for v in values if v > threshold])
+        # For Throughput: show 0-15 range, then break, then 370-400 range
+        low_max = 15  # Upper limit of lower range
+        high_min = 360  # Lower limit of upper range
+        high_max = max_val * 1.1  # Upper limit of upper range
         
         # Plot bars (grouped)
         positions = [x_center - bar_width, x_center, x_center + bar_width]
+        
+        # Separate low and high values
+        low_values = []
+        high_values = []
+        low_positions = []
+        high_positions = []
+        low_methods = []
+        high_methods = []
+        
         for i, method in enumerate(methods):
             val = df[df['Metric'] == metric_name][method].values[0]
+            if val <= low_max:
+                low_values.append(val)
+                low_positions.append(positions[i])
+                low_methods.append((method, i))
+            else:
+                high_values.append(val)
+                high_positions.append(positions[i])
+                high_methods.append((method, i))
+        
+        # Plot low values in lower range
+        for (method, orig_i), pos, val in zip(low_methods, low_positions, low_values):
             ax.bar(
-                positions[i],
+                pos,
                 val,
                 width=bar_width,
                 label=method.replace('_', ' ') if metric_name == 'Avg_Processing_Time' else '',
                 color=colors[method]
             )
         
-        # Set broken y-axis
-        # Lower part
-        ax.set_ylim(0, low_max * 1.3)
-        # Add break symbol
-        add_break_symbol(ax, low_max * 1.15, x_center=0.5, width=0.4)
+        # Set y-axis to show lower range (0-20)
+        ax.set_ylim(0, 20)
         
-        # Create custom y-axis ticks that show the break
-        # Hide top spine
+        # Add break symbol at top of lower range (wider than graph)
+        # x-axis range is -0.2 to 1.2, so width should be > 1.4
+        add_break_symbol(ax, 17, x_center=0.5, width=2.0)
+        
+        # Hide top spine to show break
         ax.spines['top'].set_visible(False)
-        # Add custom tick at break position
-        y_ticks = list(ax.get_yticks())
-        y_ticks = [t for t in y_ticks if t <= low_max * 1.2]
-        ax.set_yticks(y_ticks)
         
-        # Add annotation for high values
-        for i, method in enumerate(methods):
-            val = df[df['Metric'] == metric_name][method].values[0]
-            if val > threshold:
-                # Add text annotation above the break
-                ax.text(positions[i], low_max * 1.25, f'{val:.1e}' if val > 1000 else f'{val:.1f}',
-                       ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
+        # Set y-axis ticks for lower range
+        ax.set_yticks([0, 5, 10, 15])
+        
+        # Create second y-axis range for high values (using twinx approach)
+        # Instead, we'll plot high values scaled to upper range
+        # But first, let's use a different approach: plot high values in a transformed coordinate
+        
+        # Plot high values scaled to fit in upper part of visible area
+        for (method, orig_i), pos, val in zip(high_methods, high_positions, high_values):
+            # Scale high value to fit in upper range (17-20)
+            # Map from [high_min, high_max] to [17, 20]
+            scaled_val = 17 + (val - high_min) / (high_max - high_min) * 3
+            ax.bar(
+                pos,
+                scaled_val,
+                width=bar_width,
+                color=colors[method],
+                alpha=0.7
+            )
+            # Add text annotation with actual value
+            ax.text(pos, 19.5, f'{val:.1f}',
+                   ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
+        
+        # Add custom y-axis label for upper range
+        # Create a second set of ticks for upper range
+        upper_ticks = np.linspace(high_min, int(high_max), 5)
+        upper_tick_positions = 17 + (upper_ticks - high_min) / (high_max - high_min) * 3
+        # Add secondary y-axis labels on the right
+        ax2 = ax.twinx()
+        ax2.set_ylim(ax.get_ylim())
+        ax2.set_yticks(upper_tick_positions)
+        ax2.set_yticklabels([f'{int(t)}' for t in upper_ticks], fontsize=20)
+        ax2.spines['right'].set_visible(True)
+        ax2.spines['top'].set_visible(False)
+        ax2.spines['left'].set_visible(False)
+        ax2.spines['bottom'].set_visible(False)
     else:
         # Plot normally
         positions = [x_center - bar_width, x_center, x_center + bar_width]
@@ -151,17 +192,17 @@ def main():
         ax.tick_params(axis='y', labelsize=24)
         ax.grid(True, alpha=0.3, linestyle='--')
     
-    # Add a single legend at the top center
+    # Add a single legend at the top center, above all subplots
     handles, labels = axes[0].get_legend_handles_labels()
     fig.legend(handles, labels,
                loc='upper center',
                ncol=3,
                frameon=True,
                fontsize=27,
-               bbox_to_anchor=(0.5, 1.0),
+               bbox_to_anchor=(0.5, 1.02),
                bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0, 0.02, 1, 0.95])
+    fig.tight_layout(rect=[0, 0.02, 1, 0.92])
     
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
