@@ -20,8 +20,8 @@ def add_break_symbol(ax, y_break_pos, x_center=0.5, width=1.5):
     wave_pattern = 0.01 * y_range * np.sin(15 * np.pi * (x_data - (x_center - width/2)) / width)
     
     # First wavy line (outer, upper) - parallel to second line
-    # Create clear gap between two lines
-    y_data1 = y_break_pos + 0.015 * y_range + wave_pattern
+    # Create clear gap between two lines (2x wider)
+    y_data1 = y_break_pos + 0.02 * y_range + wave_pattern
     
     # Second wavy line (inner, lower) - parallel to first line
     y_data2 = y_break_pos + 0.005 * y_range + wave_pattern
@@ -50,13 +50,6 @@ def add_break_symbol(ax, y_break_pos, x_center=0.5, width=1.5):
             [y_break_pos - 0.008 * y_range, 
              y_break_pos + 0.008 * y_range], 
             'k-', linewidth=3, clip_on=False, zorder=15)
-    
-    # Draw white rectangle to cover top spine in the break area
-    from matplotlib.patches import Rectangle
-    rect = Rectangle((x_center - width/2, y_break_pos - 0.01 * y_range), 
-                     width, 0.025 * y_range,
-                     facecolor='white', edgecolor='none', zorder=12, transform=ax.transData)
-    ax.add_patch(rect)
 
 
 def plot_metric(ax, df, metric_name, methods, colors, bar_width):
@@ -109,6 +102,9 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width):
                 label=method.replace('_', ' ') if metric_name == 'Avg_Processing_Time' else '',
                 color=colors[method]
             )
+            # Add text annotation for low values too
+            ax.text(pos, val + 0.5, f'{val:.1f}',
+                   ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
         
         # Set y-axis to show lower range (0-20)
         ax.set_ylim(0, 20)
