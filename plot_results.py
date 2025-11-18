@@ -41,11 +41,11 @@ def plot_single_result(df, title, output_path):
             color=colors[method]
         )
     
-    ax.set_title(title, fontsize=10)
+    ax.set_title(title, fontsize=30)
     ax.set_xticks(x)
-    ax.set_xticklabels(metrics, fontsize=8)
-    ax.set_ylabel("Value", fontsize=9)
-    ax.tick_params(axis='y', labelsize=8)
+    ax.set_xticklabels(metrics, fontsize=24)
+    ax.set_ylabel("Value", fontsize=27)
+    ax.tick_params(axis='y', labelsize=24)
     ax.grid(True, alpha=0.3, linestyle='--')
     
     # Add legend at the top center, above the graph area
@@ -54,11 +54,11 @@ def plot_single_result(df, title, output_path):
                loc='upper center',
                ncol=3,
                frameon=True,
-               fontsize=9,
+               fontsize=27,
                bbox_to_anchor=(0.5, 1.0),
                bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0, 0.08, 1, 0.90])
+    fig.tight_layout(rect=[0, 0.02, 1, 0.95])
     
     # Save image
     plt.savefig(output_path, dpi=300)

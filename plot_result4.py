@@ -1,0 +1,178 @@
+import os
+from pathlib import Path
+import numpy as np
+
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+import pandas as pd
+
+
+def add_break_symbol(ax, y_break_pos, x_center=0.5, width=0.3):
+    """Add a wavy break symbol (~~~~) to indicate axis break at y position."""
+    # Convert y position to axes coordinates (0-1)
+    y_ax = (y_break_pos - ax.get_ylim()[0]) / (ax.get_ylim()[1] - ax.get_ylim()[0])
+    
+    # Create wavy line in data coordinates
+    x_data = np.linspace(x_center - width/2, x_center + width/2, 50)
+    y_data = y_break_pos + 0.01 * (ax.get_ylim()[1] - ax.get_ylim()[0]) * np.sin(15 * np.pi * (x_data - (x_center - width/2)) / width)
+    
+    ax.plot(x_data, y_data, 'k-', linewidth=2, clip_on=False, zorder=10)
+    # Add small vertical lines at ends
+    ax.plot([x_center - width/2, x_center - width/2], 
+            [y_break_pos - 0.005 * (ax.get_ylim()[1] - ax.get_ylim()[0]), 
+             y_break_pos + 0.005 * (ax.get_ylim()[1] - ax.get_ylim()[0])], 
+            'k-', linewidth=2, clip_on=False, zorder=10)
+    ax.plot([x_center + width/2, x_center + width/2], 
+            [y_break_pos - 0.005 * (ax.get_ylim()[1] - ax.get_ylim()[0]), 
+             y_break_pos + 0.005 * (ax.get_ylim()[1] - ax.get_ylim()[0])], 
+            'k-', linewidth=2, clip_on=False, zorder=10)
+
+
+def plot_metric(ax, df, metric_name, methods, colors, bar_width):
+    """Plot bars for a metric, with broken axis if values differ significantly."""
+    values = [df[df['Metric'] == metric_name][method].values[0] for method in methods]
+    max_val = max(values)
+    min_val = min(values)
+    
+    # Position for grouped bars (single group of 3 bars)
+    x_center = 0.5
+    
+    # Check if we need broken axis (max is more than 3x min and both > 0)
+    needs_break = max_val > 0 and min_val > 0 and max_val / min_val > 3
+    
+    if needs_break:
+        # Find threshold to split
+        sorted_vals = sorted(values)
+        # Find gap
+        gap_idx = 0
+        for i in range(len(sorted_vals) - 1):
+            if sorted_vals[i+1] / sorted_vals[i] > 2:
+                gap_idx = i
+                break
+        
+        threshold = sorted_vals[gap_idx + 1] * 0.5 if gap_idx < len(sorted_vals) - 1 else max_val * 0.3
+        low_max = max([v for v in values if v <= threshold])
+        high_min = min([v for v in values if v > threshold])
+        
+        # Plot bars (grouped)
+        positions = [x_center - bar_width, x_center, x_center + bar_width]
+        for i, method in enumerate(methods):
+            val = df[df['Metric'] == metric_name][method].values[0]
+            ax.bar(
+                positions[i],
+                val,
+                width=bar_width,
+                label=method.replace('_', ' ') if metric_name == 'Avg_Processing_Time' else '',
+                color=colors[method]
+            )
+        
+        # Set broken y-axis
+        # Lower part
+        ax.set_ylim(0, low_max * 1.3)
+        # Add break symbol
+        add_break_symbol(ax, low_max * 1.15, x_center=0.5, width=0.4)
+        
+        # Create custom y-axis ticks that show the break
+        # Hide top spine
+        ax.spines['top'].set_visible(False)
+        # Add custom tick at break position
+        y_ticks = list(ax.get_yticks())
+        y_ticks = [t for t in y_ticks if t <= low_max * 1.2]
+        ax.set_yticks(y_ticks)
+        
+        # Add annotation for high values
+        for i, method in enumerate(methods):
+            val = df[df['Metric'] == metric_name][method].values[0]
+            if val > threshold:
+                # Add text annotation above the break
+                ax.text(positions[i], low_max * 1.25, f'{val:.1e}' if val > 1000 else f'{val:.1f}',
+                       ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
+    else:
+        # Plot normally
+        positions = [x_center - bar_width, x_center, x_center + bar_width]
+        for i, method in enumerate(methods):
+            val = df[df['Metric'] == metric_name][method].values[0]
+            ax.bar(
+                positions[i],
+                val,
+                width=bar_width,
+                label=method.replace('_', ' ') if metric_name == 'Avg_Processing_Time' else '',
+                color=colors[method]
+            )
+        ax.set_ylim(0, max_val * 1.2 if max_val > 0 else 1)
+    
+    ax.set_xlim(-0.2, 1.2)
+    ax.set_xticks([])
+
+
+def main():
+    # Base directory
+    base_dir = Path(__file__).resolve().parent
+    results_dir = base_dir.parent / "Results"
+    
+    # Avoid issues with minus sign rendering
+    mpl.rcParams["axes.unicode_minus"] = False
+    
+    # Load result4.csv
+    df = pd.read_csv(results_dir / "result4.csv")
+    
+    # A4 half-width size, 3 subplots vertically
+    fig, axes = plt.subplots(3, 1, figsize=(8, 3.5))
+    fig.patch.set_facecolor('white')
+    
+    # Color scheme
+    colors = {
+        'Snort': '#E74C3C',  # Red
+        'Snort_Proposed': '#27AE60',  # Green
+        'SoTA_ML': '#3498DB'  # Blue
+    }
+    
+    methods = ['Snort', 'Snort_Proposed', 'SoTA_ML']
+    bar_width = 0.25
+    
+    # Metric names and y-axis labels
+    metrics_info = [
+        ('Avg_Processing_Time', 'Avg Processing Time (ms)', 0),
+        ('p95_Latency', 'p95 Latency (ms)', 1),
+        ('Throughput', 'Throughput (ops/s)', 2)
+    ]
+    
+    for metric_name, ylabel, idx in metrics_info:
+        ax = axes[idx]
+        ax.set_facecolor('white')
+        
+        # Plot metric with potential broken axis
+        plot_metric(ax, df, metric_name, methods, colors, bar_width)
+        
+        ax.set_title(metric_name.replace('_', ' '), fontsize=30)
+        ax.set_ylabel(ylabel, fontsize=27)
+        ax.tick_params(axis='y', labelsize=24)
+        ax.grid(True, alpha=0.3, linestyle='--')
+    
+    # Add a single legend at the top center
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels,
+               loc='upper center',
+               ncol=3,
+               frameon=True,
+               fontsize=27,
+               bbox_to_anchor=(0.5, 1.0),
+               bbox_transform=fig.transFigure)
+    
+    fig.tight_layout(rect=[0, 0.02, 1, 0.95])
+    
+    # Output folder: ../Graph
+    graph_dir = base_dir.parent / "Graph"
+    os.makedirs(graph_dir, exist_ok=True)
+    
+    # Save image
+    output_path = graph_dir / "result4_processing.png"
+    plt.savefig(output_path, dpi=300)
+    plt.close()
+    
+    print(f"Saved: {output_path}")
+
+
+if __name__ == "__main__":
+    main()
+
