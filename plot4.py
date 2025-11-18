@@ -20,11 +20,11 @@ def add_break_symbol(ax, y_break_pos, x_center=0.5, width=1.5):
     wave_pattern = 0.01 * y_range * np.sin(15 * np.pi * (x_data - (x_center - width/2)) / width)
     
     # First wavy line (outer, upper) - parallel to second line
-    # Create clear gap between two lines (2x wider)
-    y_data1 = y_break_pos + 0.02 * y_range + wave_pattern
+    # Create clear gap between two lines (1.5x wider than before)
+    y_data1 = y_break_pos + 0.025 * y_range + wave_pattern
     
     # Second wavy line (inner, lower) - parallel to first line
-    y_data2 = y_break_pos + 0.005 * y_range + wave_pattern
+    y_data2 = y_break_pos + 0.0025 * y_range + wave_pattern
     
     # Create polygon path for white fill between the two wavy lines
     # Combine outer line (forward) and inner line (backward) to form closed path
@@ -114,9 +114,9 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
         ax.set_ylim(0, 35)
         
         # Find the middle point between SoTA ML (low values) and Snort/Snort+FlowSign (high values)
-        # SoTA ML max is around 15, high values start at 25, so middle is around 20
+        # SoTA ML max is around 15, high values start at 27, so middle is around 21
         sota_ml_max = max(low_values) if low_values else 15
-        high_start = 25  # Where high values start
+        high_start = 27  # Where high values start
         break_position = (sota_ml_max + high_start) / 2  # Middle position
         
         # Add break symbol at middle position between SoTA ML and high values
@@ -130,11 +130,11 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
         ax.set_yticks([0, 5, 10, 15])
         
         # Plot high values scaled to fit in upper part of visible area
-        # Keep Snort and Snort + FlowSign at higher position to maintain bar length (25-30 range)
+        # Keep Snort and Snort + FlowSign at higher position to maintain bar length (27-32 range)
         for (method, orig_i), pos, val in zip(high_methods, high_positions, high_values):
-            # Scale high value to fit in upper range (25-30) - maintain bar length
-            # Map from [high_min, high_max] to [25, 30]
-            scaled_val = 25 + (val - high_min) / (high_max - high_min) * 5
+            # Scale high value to fit in upper range (27-32) - maintain bar length, slightly higher
+            # Map from [high_min, high_max] to [27, 32]
+            scaled_val = 27 + (val - high_min) / (high_max - high_min) * 5
             ax.bar(
                 pos,
                 scaled_val,
