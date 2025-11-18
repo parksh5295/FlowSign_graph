@@ -198,8 +198,7 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
                 pos,
                 scaled_val,
                 width=bar_width,
-                color=colors[method],
-                alpha=0.7
+                color=colors[method]
             )
             # Add text annotation with actual value (similar spacing to SoTA ML)
             # SoTA ML uses val + 0.5, so use scaled_val + 0.5 for similar spacing
@@ -377,8 +376,7 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
                     scaled_val,
                     width=bar_width,
                     label=label_text,
-                    color=method_color,
-                    alpha=0.7
+                    color=method_color
                 )
                 # Add text annotation (same spacing as Throughput)
                 ax.text(pos, scaled_val + 0.5, f'{val:.1f}',
@@ -418,11 +416,11 @@ def main():
     fig, axes = plt.subplots(1, 3, figsize=(36, 10.5))  # 3 subplots horizontally, 3x text
     fig.patch.set_facecolor('white')
     
-    # Color scheme
+    # Color scheme - unified dark colors
     colors = {
-        'Snort': '#E74C3C',  # Red
-        'Snort_Proposed': '#27AE60',  # Green (will be displayed as "Snort + FlowSign")
-        'SoTA_ML': '#3498DB'  # Blue
+        'Snort': '#C0392B',  # Dark Red
+        'Snort_Proposed': '#229954',  # Dark Green (will be displayed as "Snort + FlowSign")
+        'SoTA_ML': '#2980B9'  # Dark Blue
     }
     
     methods = ['Snort', 'Snort_Proposed', 'SoTA_ML']
