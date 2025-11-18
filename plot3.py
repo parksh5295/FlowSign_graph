@@ -509,7 +509,7 @@ def main():
                             ncol=len(method_handles),
                             frameon=True,
                             fontsize=76,
-                            bbox_to_anchor=(0.5, 1.02),
+                            bbox_to_anchor=(0.5, 1.03),
                             bbox_transform=fig.transFigure)
         
         # Second row: Max (lower) - 아래로 내림
@@ -518,7 +518,7 @@ def main():
                             ncol=1,
                             frameon=True,
                             fontsize=76,
-                            bbox_to_anchor=(0.5, 0.94),
+                            bbox_to_anchor=(0.5, 0.91),
                             bbox_transform=fig.transFigure)
     else:
         fig.legend(all_handles, all_labels,

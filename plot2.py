@@ -179,27 +179,57 @@ def main():
         
         ax.spines['top'].set_visible(True)
         
-        # Set y-axis ticks
+        # Set y-axis ticks (100 위에 여유 공간 추가)
         lower_ticks = [0, 25, 50]
         lower_tick_positions = [0, 10, 20]
         high_ticks = [90, 100]
         high_tick_positions = [27, 35]
+        # 100 위에 여유 공간을 주기 위해 ylim을 더 높게 설정
+        ax.set_ylim(0, 40)  # 35 -> 40으로 증가
         
         all_ticks = lower_tick_positions + high_tick_positions
         all_tick_labels = [f'{int(t)}' for t in lower_ticks] + [f'{int(t)}' for t in high_ticks]
         ax.set_yticks(all_ticks)
         ax.set_yticklabels(all_tick_labels, fontsize=78)
-        ax.set_ylim(0, 35)
+        
+        # 각 막대 위에 값 표시
+        for metric_idx, metric in enumerate(metrics):
+            metric_df = df[df['Metric'] == metric]
+            if len(metric_df) > 0:
+                for i, method in enumerate(methods):
+                    val = metric_df[method].values[0]
+                    if val <= low_max:
+                        # Lower range에 있는 경우
+                        y_pos = (val / low_max) * low_range_end_pos if low_max > 0 else 0
+                        text_y = y_pos + 1  # 막대 위에 표시
+                        ax.text(positions[i][metric_idx], text_y, f'{val:.2f}',
+                               ha='center', va='bottom', fontsize=56, color=colors[method], weight='bold')
+                    else:
+                        # Upper range에 있는 경우
+                        scaled_val = high_start + (val - high_min) / (100 - high_min) * 8
+                        text_y = scaled_val + 0.5  # 막대 위에 표시
+                        ax.text(positions[i][metric_idx], text_y, f'{val:.2f}',
+                               ha='center', va='bottom', fontsize=56, color=colors[method], weight='bold')
     else:
         # Normal plotting without broken axis
         for i, method in enumerate(methods):
-            ax.bar(
+            bars = ax.bar(
                 positions[i],
                 df[method],
                 width=bar_width,
                 label=method_display_names.get(method, method.replace('_', ' ')),
                 color=colors[method]
             )
+            # 각 막대 위에 값 표시
+            for j, bar in enumerate(bars):
+                height = bar.get_height()
+                ax.text(bar.get_x() + bar.get_width() / 2., height,
+                       f'{df[method].iloc[j]:.2f}',
+                       ha='center', va='bottom', fontsize=56, color=colors[method], weight='bold')
+        
+        # 100 위에 여유 공간을 주기 위해 ylim 조정
+        current_ylim = ax.get_ylim()
+        ax.set_ylim(current_ylim[0], current_ylim[1] * 1.1)  # 10% 여유 공간 추가
     
     # Match plot1.py's font sizes
     ax.set_title("Performance Metrics", fontsize=84)
