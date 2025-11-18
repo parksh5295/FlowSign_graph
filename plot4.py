@@ -8,6 +8,9 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import pandas as pd
 
+# Set font to Times New Roman
+mpl.rcParams["font.family"] = "Times New Roman"
+
 
 def add_break_symbol(ax, y_break_pos, x_center=0.5, width=1.5):
     """Add a double wavy break symbol (~~~~) with white fill inside to indicate axis break."""
@@ -329,7 +332,8 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
             
             # Combine lower and upper ticks (same as Throughput)
             all_ticks = lower_tick_positions + high_tick_positions
-            all_tick_labels = [f'{t:.2f}' if t < 1 else f'{t:.1f}' for t in lower_ticks] + [f'{t:.1f}' for t in high_tick_values]
+            # Remove decimal points from y-axis labels
+            all_tick_labels = [f'{int(t)}' for t in lower_ticks] + [f'{int(t)}' for t in high_tick_values]
             
             # Set ticks and labels (same as Throughput)
             ax.set_yticks(all_ticks)
@@ -395,6 +399,8 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
                 ax.text(positions[i], val + max_val * 0.05, f'{val:.1f}',
                        ha='center', va='bottom', fontsize=52, color=colors[method], weight='bold')
             ax.set_ylim(0, max_val * 1.15 if max_val > 0 else 1)
+            # Remove decimal points from y-axis for normal case
+            ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{int(x)}'))
     
     ax.set_xlim(-0.2, 1.2)
     ax.set_xticks([])
@@ -447,8 +453,7 @@ def main():
         # Plot metric with potential broken axis
         plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_names)
         
-        ax.set_title(metric_name.replace('_', ' '), fontsize=84)
-        ax.set_ylabel(ylabel, fontsize=82)
+        ax.set_title(ylabel, fontsize=82)  # Use ylabel (which includes units) as title
         ax.tick_params(axis='y', labelsize=78)
         ax.grid(True, alpha=0.3, linestyle='--')
     
