@@ -177,11 +177,11 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
             lower_ticks = [t for t in lower_ticks if t <= int(low_max)]
             lower_tick_positions = [i * 5 for i in range(len(lower_ticks))]
             
-            # High ticks for BAE max
+            # High ticks for BAE max (2칸마다 1개씩 표시)
             bae_max_val = max_values[bae_idx]
             high_max = bae_max_val * 1.1
             high_tick_values = [int(bae_max_val * 0.9), int(bae_max_val), int(high_max)]
-            high_tick_positions = [27, 30, 33]
+            high_tick_positions = [27, 30, 33]  # 27, 30, 33 -> 27, 33만 표시 (2칸마다)
             
             # Plot all mean values in low range
             for i, method in enumerate(methods):
@@ -220,8 +220,12 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
                 lower_ticks_filtered = lower_ticks
                 lower_tick_positions_filtered = lower_tick_positions
             
-            all_ticks = lower_tick_positions_filtered + high_tick_positions
-            all_tick_labels = [f'{int(t)}' for t in lower_ticks_filtered] + [f'{int(t)}' for t in high_tick_values]
+            # High ticks를 2칸마다 1개씩만 표시 (Duration 그래프처럼)
+            high_tick_positions_filtered = [high_tick_positions[0], high_tick_positions[-1]]  # 첫 번째와 마지막만
+            high_tick_values_filtered = [high_tick_values[0], high_tick_values[-1]]
+            
+            all_ticks = lower_tick_positions_filtered + high_tick_positions_filtered
+            all_tick_labels = [f'{int(t)}' for t in lower_ticks_filtered] + [f'{int(t)}' for t in high_tick_values_filtered]
             ax.set_yticks(all_ticks)
             ax.set_yticklabels(all_tick_labels, fontsize=72)
             ax.set_ylim(0, 36)
@@ -269,10 +273,10 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
                 super_high_start = 42
                 break2_position = (high_range_end_pos + super_high_start) / 2
                 
-                # Super high ticks
+                # Super high ticks - 2칸마다 1개씩 표시
                 super_high_max = bae_max_val * 1.1
                 super_high_tick_values = [int(bae_max_val * 0.95), int(bae_max_val), int(super_high_max)]
-                super_high_tick_positions = [42, 45, 48]
+                super_high_tick_positions = [42, 45, 48]  # 42, 45, 48 -> 42, 48만 표시 (2칸마다)
             else:
                 high_range_end_pos = 35
                 super_high_start = None
@@ -285,9 +289,9 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
             lower_ticks = [t for t in lower_ticks if t <= int(low_max)]
             lower_tick_positions = [i * 5 for i in range(len(lower_ticks))]
             
-            # High ticks (for BAE mean)
+            # High ticks (for BAE mean) - 2칸마다 1개씩 표시
             high_tick_values = [int(bae_mean_val * 0.9), int(bae_mean_val), int(bae_mean_val * 1.1)]
-            high_tick_positions = [27, 30, 33]
+            high_tick_positions = [27, 30, 33]  # 27, 30, 33 -> 27, 33만 표시 (2칸마다)
             
             # Plot low mean values
             for idx, val, pos in low_mean_values:
@@ -335,15 +339,22 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
                 lower_ticks_filtered = lower_ticks
                 lower_tick_positions_filtered = lower_tick_positions
             
+            # High ticks와 Super high ticks를 2칸마다 1개씩만 표시 (Duration 그래프처럼)
+            high_tick_positions_filtered = [high_tick_positions[0], high_tick_positions[-1]]  # 첫 번째와 마지막만
+            high_tick_values_filtered = [high_tick_values[0], high_tick_values[-1]]
+            
             if bae_max_val:
-                all_ticks = lower_tick_positions_filtered + high_tick_positions + super_high_tick_positions
+                super_high_tick_positions_filtered = [super_high_tick_positions[0], super_high_tick_positions[-1]]  # 첫 번째와 마지막만
+                super_high_tick_values_filtered = [super_high_tick_values[0], super_high_tick_values[-1]]
+                
+                all_ticks = lower_tick_positions_filtered + high_tick_positions_filtered + super_high_tick_positions_filtered
                 all_tick_labels = ([f'{int(t)}' for t in lower_ticks_filtered] + 
-                                 [f'{int(t)}' for t in high_tick_values] + 
-                                 [f'{int(t)}' for t in super_high_tick_values])
+                                 [f'{int(t)}' for t in high_tick_values_filtered] + 
+                                 [f'{int(t)}' for t in super_high_tick_values_filtered])
                 ax.set_ylim(0, 51)
             else:
-                all_ticks = lower_tick_positions_filtered + high_tick_positions
-                all_tick_labels = [f'{int(t)}' for t in lower_ticks_filtered] + [f'{int(t)}' for t in high_tick_values]
+                all_ticks = lower_tick_positions_filtered + high_tick_positions_filtered
+                all_tick_labels = [f'{int(t)}' for t in lower_ticks_filtered] + [f'{int(t)}' for t in high_tick_values_filtered]
                 ax.set_ylim(0, 36)
             ax.set_yticks(all_ticks)
             ax.set_yticklabels(all_tick_labels, fontsize=72)
@@ -490,6 +501,7 @@ def main():
             method_labels.append(label)
     
     # Create legend in 2 rows: methods on top, Max below
+    # 범례1-범례2-그래프가 겹침 없이, 여백도 거의 없이 배열되도록
     if max_handle:
         # First row: methods (higher up)
         legend1 = fig.legend(method_handles, method_labels,
@@ -497,16 +509,16 @@ def main():
                             ncol=len(method_handles),
                             frameon=True,
                             fontsize=76,
-                            bbox_to_anchor=(0.5, 1.08),
+                            bbox_to_anchor=(0.5, 1.0),
                             bbox_transform=fig.transFigure)
         
-        # Second row: Max (lower, with more spacing)
+        # Second row: Max (lower, 바로 아래)
         legend2 = fig.legend([max_handle], [max_label],
                             loc='upper center',
                             ncol=1,
                             frameon=True,
                             fontsize=76,
-                            bbox_to_anchor=(0.5, 0.99),
+                            bbox_to_anchor=(0.5, 0.95),
                             bbox_transform=fig.transFigure)
     else:
         fig.legend(all_handles, all_labels,
@@ -514,10 +526,10 @@ def main():
                    ncol=len(all_handles),
                    frameon=True,
                    fontsize=76,
-                   bbox_to_anchor=(0.5, 1.08),
+                   bbox_to_anchor=(0.5, 1.0),
                    bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0.02, 0.01, 1, 0.82])  # Reduced top margin to prevent legend overlap
+    fig.tight_layout(rect=[0.02, 0.01, 1, 0.90])  # 범례와 그래프 사이 여백 최소화
     
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
