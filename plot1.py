@@ -25,9 +25,9 @@ def main():
     bar_width = 0.3 if len(datasets) > 2 else 0.35
 
     # A4 half-width size (A4 width = 8.27 inches, half = ~4 inches)
-    # Increase figure size to accommodate 3x larger text
-    fig_width = 27 if len(datasets) > 2 else 24  # 3x width for 3x text
-    fig, axes = plt.subplots(1, 2, figsize=(fig_width, 12))  # 3x height for 3x text
+    # Increase figure size to accommodate larger text (similar to paper body text)
+    fig_width = 30 if len(datasets) > 2 else 27  # Wider for larger text
+    fig, axes = plt.subplots(1, 2, figsize=(fig_width, 14))  # Taller for larger text
     fig.patch.set_facecolor('white')
 
     # ----- F1 Score subplot -----
@@ -38,21 +38,21 @@ def main():
         df["F1_snort"],
         width=bar_width,
         label="Snort",
-        color="#E74C3C",  # Red color for Snort
+        color="#C0392B",  # Dark Red for Snort
     )
     ax_f1.bar(
         [i + bar_width / 2 for i in x],
         df["F1_snort_FlowSign"],
         width=bar_width,
         label="Snort + FlowSign",
-        color="#27AE60",  # Green color for Snort + FlowSign
+        color="#229954",  # Dark Green for Snort + FlowSign
     )
-    ax_f1.set_title("F1 Score", fontsize=30)
+    ax_f1.set_title("F1 Score", fontsize=36)
     ax_f1.set_xticks(list(x))
-    ax_f1.set_xticklabels(datasets, fontsize=24, rotation=90, ha='center')
-    ax_f1.set_ylabel("F1 Score (%)", fontsize=27)
+    ax_f1.set_xticklabels(datasets, fontsize=32, rotation=90, ha='center')
+    ax_f1.set_ylabel("F1 Score (%)", fontsize=34)
     ax_f1.set_ylim(0, 100)
-    ax_f1.tick_params(axis='y', labelsize=24)
+    ax_f1.tick_params(axis='y', labelsize=30)
     ax_f1.grid(True, alpha=0.3, linestyle='--')
 
     # ----- Accuracy subplot -----
@@ -63,21 +63,21 @@ def main():
         df["Accuracy_snort"],
         width=bar_width,
         label="Snort",
-        color="#E74C3C",  # Red color for Snort
+        color="#C0392B",  # Dark Red for Snort
     )
     ax_acc.bar(
         [i + bar_width / 2 for i in x],
         df["Accuracy_snort_FlowSign"],
         width=bar_width,
         label="Snort + FlowSign",
-        color="#27AE60",  # Green color for Snort + FlowSign
+        color="#229954",  # Dark Green for Snort + FlowSign
     )
-    ax_acc.set_title("Accuracy", fontsize=30)
+    ax_acc.set_title("Accuracy", fontsize=36)
     ax_acc.set_xticks(list(x))
-    ax_acc.set_xticklabels(datasets, fontsize=24, rotation=90, ha='center')
-    ax_acc.set_ylabel("Accuracy (%)", fontsize=27)
+    ax_acc.set_xticklabels(datasets, fontsize=32, rotation=90, ha='center')
+    ax_acc.set_ylabel("Accuracy (%)", fontsize=34)
     ax_acc.set_ylim(0, 100)
-    ax_acc.tick_params(axis='y', labelsize=24)
+    ax_acc.tick_params(axis='y', labelsize=30)
     ax_acc.grid(True, alpha=0.3, linestyle='--')
 
     # Add a single legend at the top center, above the graph area
@@ -87,11 +87,11 @@ def main():
                loc='upper center', 
                ncol=2, 
                frameon=True,
-               fontsize=27,
+               fontsize=34,
                bbox_to_anchor=(0.5, 1.0),
                bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0, 0.02, 1, 0.95])
+    fig.tight_layout(rect=[0, 0.03, 1, 0.96])
 
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
