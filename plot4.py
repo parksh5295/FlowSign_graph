@@ -258,80 +258,66 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
         
         # Use broken axis if we have both low and high values
         if low_values and high_values:
-                # Use broken axis (similar to Throughput)
-                low_max = max(low_values)
-                high_min = min(high_values)
-                high_max = max(high_values)
-                
-                # Set y-axis range (similar to Throughput: 0-35 equivalent)
-                # Scale to fit low values in lower part
-                y_max = low_max * 2.5  # Equivalent to 35 in Throughput
-                ax.set_ylim(0, y_max)
-                
-                # Plot low values in lower range
-                for (method, orig_i), pos, val in zip(low_methods, low_positions, low_values):
-                    ax.bar(
-                        pos,
-                        val,
-                        width=bar_width,
-                        label=method_display_names.get(method, method.replace('_', ' ')) if metric_name == 'Avg_Processing_Time' else '',
-                        color=colors[method]
-                    )
-                    # Add text annotation
-                    ax.text(pos, val + low_max * 0.05, f'{val:.1f}',
-                           ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
-                
-                # Find break position (similar to Throughput)
-                low_max_pos = low_max
-                high_start = low_max * 1.8  # Where high values start (equivalent to 27 in Throughput)
-                break_position = (low_max_pos + high_start) / 2
-                
-                # Add break symbol
-                add_break_symbol(ax, break_position, x_center=0.5, width=1.0)
-                
-                # Keep top spine visible
-                ax.spines['top'].set_visible(True)
-                
-                # Plot high values scaled to fit above break (similar to Throughput)
-                # Map from [high_min, high_max] to [high_start, high_start + 5]
-                for (method, orig_i), pos, val in zip(high_methods, high_positions, high_values):
-                    scaled_val = high_start + (val - high_min) / (high_max - high_min) * (y_max - high_start - 1)
-                    # Add label for legend (only for first metric to avoid duplicates)
-                    # Use method_display_names to get correct display name
-                    # IMPORTANT: Always set label for Avg_Processing_Time to ensure legend includes all methods
-                    label_text = method_display_names.get(method, method.replace('_', ' ')) if metric_name == 'Avg_Processing_Time' else ''
-                    # Make sure color matches the method - use the actual method name from the tuple
-                    method_color = colors.get(method, '#000000')  # Default to black if not found
-                    ax.bar(
-                        pos,
-                        scaled_val,
-                        width=bar_width,
-                        label=label_text,
-                        color=method_color,
-                        alpha=0.7
-                    )
-                    # Add text annotation with actual value
-                    ax.text(pos, scaled_val + (y_max - high_start) * 0.05, f'{val:.1f}',
-                           ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
-                
-                # Set y-axis ticks for lower range
-                ax.set_yticks([0, low_max * 0.5, low_max, low_max * 1.5, low_max * 2.0])
-            else:
-                # No clear separation, plot normally
-                for i, method in enumerate(methods):
-                    val = df[df['Metric'] == metric_name][method].values[0]
-                    ax.bar(
-                        positions[i],
-                        val,
-                        width=bar_width,
-                        label=method_display_names.get(method, method.replace('_', ' ')) if metric_name == 'Avg_Processing_Time' else '',
-                        color=colors[method]
-                    )
-                    ax.text(positions[i], val + max_val * 0.05, f'{val:.1f}',
-                           ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
-                ax.set_ylim(0, max_val * 1.15 if max_val > 0 else 1)
+            # Use broken axis (similar to Throughput)
+            low_max = max(low_values)
+            high_min = min(high_values)
+            high_max = max(high_values)
+            
+            # Set y-axis range (similar to Throughput: 0-35 equivalent)
+            # Scale to fit low values in lower part
+            y_max = low_max * 2.5  # Equivalent to 35 in Throughput
+            ax.set_ylim(0, y_max)
+            
+            # Plot low values in lower range
+            for (method, orig_i), pos, val in zip(low_methods, low_positions, low_values):
+                ax.bar(
+                    pos,
+                    val,
+                    width=bar_width,
+                    label=method_display_names.get(method, method.replace('_', ' ')) if metric_name == 'Avg_Processing_Time' else '',
+                    color=colors[method]
+                )
+                # Add text annotation
+                ax.text(pos, val + low_max * 0.05, f'{val:.1f}',
+                       ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
+            
+            # Find break position (similar to Throughput)
+            low_max_pos = low_max
+            high_start = low_max * 1.8  # Where high values start (equivalent to 27 in Throughput)
+            break_position = (low_max_pos + high_start) / 2
+            
+            # Add break symbol
+            add_break_symbol(ax, break_position, x_center=0.5, width=1.0)
+            
+            # Keep top spine visible
+            ax.spines['top'].set_visible(True)
+            
+            # Plot high values scaled to fit above break (similar to Throughput)
+            # Map from [high_min, high_max] to [high_start, high_start + 5]
+            for (method, orig_i), pos, val in zip(high_methods, high_positions, high_values):
+                scaled_val = high_start + (val - high_min) / (high_max - high_min) * (y_max - high_start - 1)
+                # Add label for legend (only for first metric to avoid duplicates)
+                # Use method_display_names to get correct display name
+                # IMPORTANT: Always set label for Avg_Processing_Time to ensure legend includes all methods
+                label_text = method_display_names.get(method, method.replace('_', ' ')) if metric_name == 'Avg_Processing_Time' else ''
+                # Make sure color matches the method - use the actual method name from the tuple
+                method_color = colors.get(method, '#000000')  # Default to black if not found
+                ax.bar(
+                    pos,
+                    scaled_val,
+                    width=bar_width,
+                    label=label_text,
+                    color=method_color,
+                    alpha=0.7
+                )
+                # Add text annotation with actual value
+                ax.text(pos, scaled_val + (y_max - high_start) * 0.05, f'{val:.1f}',
+                       ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
+            
+            # Set y-axis ticks for lower range
+            ax.set_yticks([0, low_max * 0.5, low_max, low_max * 1.5, low_max * 2.0])
         else:
-            # No significant gap, plot normally
+            # No clear separation, plot normally
             for i, method in enumerate(methods):
                 val = df[df['Metric'] == metric_name][method].values[0]
                 ax.bar(
