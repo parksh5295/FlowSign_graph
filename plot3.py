@@ -461,6 +461,7 @@ def main():
     method_display_names = {
         'Snort': 'Snort',
         'Snort_Proposed': 'Snort + FlowSign',
+        'BAE-UQ-IDS': 'BAE-UQ-IDS',  # 하이픈 유지
     }
     
     # Map method_columns to method names (for display)
@@ -470,6 +471,8 @@ def main():
             methods.append('Snort')
         elif col == 'Snort_Proposed':
             methods.append('Snort_Proposed')
+        elif col == 'BAE-UQ-IDS':
+            methods.append('BAE-UQ-IDS')  # 하이픈 유지
         else:
             methods.append(col)  # Use column name as-is for others
     
