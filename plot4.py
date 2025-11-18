@@ -109,7 +109,7 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
             )
             # Add text annotation for low values too
             ax.text(pos, val + 0.5, f'{val:.1f}',
-                   ha='center', va='bottom', fontsize=55, color=colors[method], weight='bold')
+                   ha='center', va='bottom', fontsize=52, color=colors[method], weight='bold')
         
         # Find the middle point between SoTA ML (low values) and Snort/Snort+FlowSign (high values)
         # SoTA ML max is around 15, high values start at 27, so middle is around 21
@@ -203,7 +203,7 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
             # Add text annotation with actual value (similar spacing to SoTA ML)
             # SoTA ML uses val + 0.5, so use scaled_val + 0.5 for similar spacing
             ax.text(pos, scaled_val + 0.5, f'{val:.1f}',
-                       ha='center', va='bottom', fontsize=55, color=colors[method], weight='bold')
+                       ha='center', va='bottom', fontsize=52, color=colors[method], weight='bold')
     else:
         # Plot normally (for Avg_Processing_Time and p95_Latency)
         # Use EXACT same approach as Throughput: separate low and high values
@@ -319,7 +319,7 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
                 )
                 # Add text annotation
                 ax.text(pos, y_pos + low_range_end_pos * 0.05, f'{val:.1f}',
-                       ha='center', va='bottom', fontsize=55, color=colors[method], weight='bold')
+                       ha='center', va='bottom', fontsize=52, color=colors[method], weight='bold')
             
             # Add break symbol (same as Throughput)
             add_break_symbol(ax, break_position, x_center=0.5, width=1.4)
@@ -380,7 +380,7 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
                 )
                 # Add text annotation (same spacing as Throughput)
                 ax.text(pos, scaled_val + 0.5, f'{val:.1f}',
-                       ha='center', va='bottom', fontsize=55, color=colors[method], weight='bold')
+                       ha='center', va='bottom', fontsize=52, color=colors[method], weight='bold')
         else:
             # No clear separation, plot normally
             for i, method in enumerate(methods):
@@ -393,7 +393,7 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
                     color=colors[method]
                 )
                 ax.text(positions[i], val + max_val * 0.05, f'{val:.1f}',
-                       ha='center', va='bottom', fontsize=55, color=colors[method], weight='bold')
+                       ha='center', va='bottom', fontsize=52, color=colors[method], weight='bold')
             ax.set_ylim(0, max_val * 1.15 if max_val > 0 else 1)
     
     ax.set_xlim(-0.2, 1.2)
