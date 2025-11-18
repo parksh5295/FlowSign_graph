@@ -442,8 +442,8 @@ def main():
     
     # Metric names and y-axis labels (horizontal layout)
     metrics_info = [
-        ('Avg_Processing_Time', 'Avg Processing Time (ms)', 0),
-        ('p95_Latency', 'p95 Latency (ms)', 1),
+        ('Avg_Processing_Time', 'Avg Processing Time (μs)', 0),
+        ('p95_Latency', 'p95 Latency (μs)', 1),
         ('Throughput', 'Throughput (kpps)', 2)
     ]
     
