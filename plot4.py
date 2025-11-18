@@ -436,7 +436,7 @@ def main():
     method_display_names = {
         'Snort': 'Snort',
         'Snort_Proposed': 'Snort + FlowSign',
-        'SoTA_ML': 'SoTA ML'
+        'SoTA_ML': 'BAE-UQ-IDS'
     }
     bar_width = 0.4  # Wider bars to fill the graph area
     
