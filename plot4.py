@@ -157,11 +157,19 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
         ax.set_yticklabels(all_tick_labels, fontsize=24)
         
         # Plot high values scaled to fit in upper part of visible area
-        # Keep Snort and Snort + FlowSign at higher position to maintain bar length (27-32 range)
+        # Map to the actual y-axis positions where ticks are located
+        # high_tick_positions are at 27, 32, 37, 42... (5 units apart)
+        # Map values to match these tick positions
         for (method, orig_i), pos, val in zip(high_methods, high_positions, high_values):
-            # Scale high value to fit in upper range (27-32) - maintain bar length, slightly higher
-            # Map from [high_min, high_max] to [27, 32]
-            scaled_val = 27 + (val - high_min) / (high_max - high_min) * 5
+            if num_ticks > 1:
+                # Use the range from first to last tick position
+                tick_range_start = high_tick_positions[0]  # 27
+                tick_range_end = high_tick_positions[-1]   # e.g., 32, 37, 42...
+                scaled_val = tick_range_start + (val - high_min) / (high_max - high_min) * (tick_range_end - tick_range_start)
+            else:
+                # Fallback to original scaling
+                scaled_val = 27 + (val - high_min) / (high_max - high_min) * 5
+            
             ax.bar(
                 pos,
                 scaled_val,
@@ -197,9 +205,10 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
             # Use method name to determine classification (more reliable)
             for i, method in enumerate(methods):
                 val = df[df['Metric'] == metric_name][method].values[0]
+                # Debug: print method name and value to verify classification
                 # Snort and Snort_Proposed are typically low values
                 # SoTA_ML is typically high value
-                if method in ['Snort', 'Snort_Proposed']:
+                if method == 'Snort' or method == 'Snort_Proposed':
                     low_values.append(val)
                     low_positions.append(positions[i])
                     low_methods.append((method, i))
@@ -259,13 +268,17 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
                 for (method, orig_i), pos, val in zip(high_methods, high_positions, high_values):
                     scaled_val = high_start + (val - high_min) / (high_max - high_min) * (y_max - high_start - 1)
                     # Add label for legend (only for first metric to avoid duplicates)
+                    # Use method_display_names to get correct display name
+                    # IMPORTANT: Always set label for Avg_Processing_Time to ensure legend includes all methods
                     label_text = method_display_names.get(method, method.replace('_', ' ')) if metric_name == 'Avg_Processing_Time' else ''
+                    # Make sure color matches the method - use the actual method name from the tuple
+                    method_color = colors.get(method, '#000000')  # Default to black if not found
                     ax.bar(
                         pos,
                         scaled_val,
                         width=bar_width,
                         label=label_text,
-                        color=colors[method],
+                        color=method_color,
                         alpha=0.7
                     )
                     # Add text annotation with actual value
@@ -360,8 +373,35 @@ def main():
         ax.grid(True, alpha=0.3, linestyle='--')
     
     # Add a single legend at the top center, above all subplots
-    handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(handles, labels,
+    # Collect handles and labels from all axes to ensure all methods are included
+    all_handles = []
+    all_labels = []
+    seen_labels = set()
+    
+    # First, collect all handles and labels from all axes
+    for ax in axes:
+        handles, labels = ax.get_legend_handles_labels()
+        for handle, label in zip(handles, labels):
+            if label and label not in seen_labels:
+                all_handles.append(handle)
+                all_labels.append(label)
+                seen_labels.add(label)
+    
+    # Debug: Check which methods are missing
+    # If some methods are missing from legend, add them manually with correct colors
+    for method in methods:
+        display_name = method_display_names.get(method, method.replace('_', ' '))
+        if display_name not in seen_labels:
+            # Create a dummy handle with the correct color
+            from matplotlib.patches import Rectangle
+            # Use the actual color from colors dictionary
+            method_color = colors.get(method, '#000000')
+            dummy_handle = Rectangle((0, 0), 1, 1, facecolor=method_color, edgecolor='black')
+            all_handles.append(dummy_handle)
+            all_labels.append(display_name)
+            seen_labels.add(display_name)
+    
+    fig.legend(all_handles, all_labels,
                loc='upper center',
                ncol=3,
                frameon=True,
