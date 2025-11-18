@@ -207,10 +207,10 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
                    ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
     else:
         # Plot normally (for Avg_Processing_Time and p95_Latency)
-        # Use similar approach to Throughput: separate low and high values
+        # Use EXACT same approach as Throughput: separate low and high values
         positions = [x_center - bar_width, x_center, x_center + bar_width]
         
-        # Separate low and high values (similar to Throughput logic)
+        # Separate low and high values (EXACT same logic as Throughput)
         # Low values: Snort and Snort+FlowSign (typically small)
         # High values: SoTA ML (typically large)
         low_values = []
@@ -220,16 +220,11 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
         low_methods = []
         high_methods = []
         
-        # Determine threshold: if max is much larger than min, use broken axis
-        # For Avg_Processing_Time and p95_Latency: Always separate by method name
-        # Snort and Snort+FlowSign are low, SoTA ML is high
-        sorted_vals = sorted(values)
-        
-        # Always classify by method name for these metrics
+        # Classify by method name (same as Throughput logic)
         for i, method in enumerate(methods):
             val = df[df['Metric'] == metric_name][method].values[0]
-            # Snort and Snort_Proposed are typically low values
-            # SoTA_ML is typically high value
+            # Snort and Snort_Proposed are low values
+            # SoTA_ML is high value
             if method == 'Snort' or method == 'Snort_Proposed':
                 low_values.append(val)
                 low_positions.append(positions[i])
@@ -238,37 +233,15 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
                 high_values.append(val)
                 high_positions.append(positions[i])
                 high_methods.append((method, i))
-            else:
-                # Fallback: use value-based threshold
-                if len(sorted_vals) >= 2:
-                    threshold = sorted_vals[0] * 5
-                    if val <= threshold:
-                        low_values.append(val)
-                        low_positions.append(positions[i])
-                        low_methods.append((method, i))
-                    else:
-                        high_values.append(val)
-                        high_positions.append(positions[i])
-                        high_methods.append((method, i))
-                else:
-                    # Default to low if can't determine
-                    low_values.append(val)
-                    low_positions.append(positions[i])
-                    low_methods.append((method, i))
         
-        # Use broken axis if we have both low and high values
+        # Use broken axis if we have both low and high values (same as Throughput)
         if low_values and high_values:
-            # Use broken axis (similar to Throughput)
-            low_max = max(low_values)
-            high_min = min(high_values)
-            high_max = max(high_values)
+            # Calculate ranges (similar to Throughput but dynamic)
+            low_max = max(low_values) * 1.1  # Upper limit of lower range (with padding)
+            high_min = min(high_values) * 0.9  # Lower limit of upper range (with padding)
+            high_max = max(high_values) * 1.1  # Upper limit of upper range
             
-            # Set y-axis range (similar to Throughput: 0-35 equivalent)
-            # Scale to fit low values in lower part
-            y_max = low_max * 2.5  # Equivalent to 35 in Throughput
-            ax.set_ylim(0, y_max)
-            
-            # Plot low values in lower range
+            # Plot low values in lower range (same as Throughput)
             for (method, orig_i), pos, val in zip(low_methods, low_positions, low_values):
                 ax.bar(
                     pos,
@@ -277,31 +250,104 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
                     label=method_display_names.get(method, method.replace('_', ' ')) if metric_name == 'Avg_Processing_Time' else '',
                     color=colors[method]
                 )
-                # Add text annotation
-                ax.text(pos, val + low_max * 0.05, f'{val:.1f}',
+                # Add text annotation (same spacing as Throughput)
+                ax.text(pos, val + max(low_values) * 0.05, f'{val:.1f}',
                        ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
             
-            # Find break position (similar to Throughput)
-            low_max_pos = low_max
-            high_start = low_max * 1.8  # Where high values start (equivalent to 27 in Throughput)
-            break_position = (low_max_pos + high_start) / 2
+            # Find break position (same as Throughput)
+            low_max_val = max(low_values)
+            high_start = 27  # Where high values start (same as Throughput: 27)
+            break_position = (low_max_val + high_start) / 2
             
-            # Add break symbol
+            # Set y-axis ticks for lower range (similar to Throughput)
+            # Create lower ticks based on low_max
+            lower_ticks = []
+            tick_step = low_max_val / 3  # Divide into 3-4 ticks
+            if tick_step < 0.1:
+                tick_step = 0.1
+            elif tick_step < 1:
+                tick_step = round(tick_step, 1)
+            else:
+                tick_step = round(tick_step)
+            
+            current_tick = 0
+            while current_tick <= low_max_val:
+                lower_ticks.append(current_tick)
+                current_tick += tick_step
+            
+            # High value ticks: create ticks for high range
+            # Use similar spacing logic as Throughput
+            tick_range = high_max - high_min
+            if tick_range > 0:
+                # Create 4-5 ticks for high range
+                num_high_ticks = 5
+                high_tick_step = tick_range / (num_high_ticks - 1)
+                high_tick_values = [high_min + i * high_tick_step for i in range(num_high_ticks)]
+            else:
+                high_tick_values = [high_min, high_max]
+            
+            # Map to y-axis positions with SAME VISUAL SPACING as lower ticks (same as Throughput)
+            num_ticks = len(high_tick_values)
+            if num_ticks > 1:
+                # Use 27 to 27 + (num_ticks-1)*5 to maintain 5-unit visual spacing (same as Throughput)
+                high_tick_positions = [27 + i * 5 for i in range(num_ticks)]
+            else:
+                high_tick_positions = [27]
+            
+            # Set y-axis range to accommodate upper ticks (same as Throughput)
+            y_max = 27 + (num_ticks - 1) * 5 + 3 if num_ticks > 1 else 35
+            ax.set_ylim(0, y_max)
+            
+            # Add break symbol (same as Throughput)
             add_break_symbol(ax, break_position, x_center=0.5, width=1.0)
             
-            # Keep top spine visible
+            # Keep top spine visible (same as Throughput)
             ax.spines['top'].set_visible(True)
             
-            # Plot high values scaled to fit above break (similar to Throughput)
-            # Map from [high_min, high_max] to [high_start, high_start + 5]
+            # Combine lower and upper ticks (same as Throughput)
+            all_ticks = lower_ticks + high_tick_positions
+            all_tick_labels = [f'{t:.2f}' if t < 1 else f'{t:.1f}' for t in lower_ticks] + [f'{t:.1f}' for t in high_tick_values]
+            
+            # Set ticks and labels (same as Throughput)
+            ax.set_yticks(all_ticks)
+            ax.set_yticklabels(all_tick_labels, fontsize=24)
+            
+            # Plot high values scaled to fit in upper part (EXACT same logic as Throughput)
             for (method, orig_i), pos, val in zip(high_methods, high_positions, high_values):
-                scaled_val = high_start + (val - high_min) / (high_max - high_min) * (y_max - high_start - 1)
-                # Add label for legend (only for first metric to avoid duplicates)
-                # Use method_display_names to get correct display name
-                # IMPORTANT: Always set label for Avg_Processing_Time to ensure legend includes all methods
+                if num_ticks > 1:
+                    # Find the closest tick value and interpolate (EXACT same as Throughput)
+                    closest_idx = 0
+                    for i, tick_val in enumerate(high_tick_values):
+                        if val >= tick_val:
+                            closest_idx = i
+                        else:
+                            break
+                    
+                    # If value is exactly at a tick or beyond the last tick
+                    if closest_idx >= len(high_tick_positions) - 1:
+                        scaled_val = high_tick_positions[-1]
+                    elif abs(val - high_tick_values[closest_idx]) < 0.01:  # Close enough to be considered equal
+                        scaled_val = high_tick_positions[closest_idx]
+                    else:
+                        # Interpolate between two adjacent ticks
+                        if closest_idx < len(high_tick_positions) - 1:
+                            tick_val_low = high_tick_values[closest_idx]
+                            tick_val_high = high_tick_values[closest_idx + 1]
+                            pos_low = high_tick_positions[closest_idx]
+                            pos_high = high_tick_positions[closest_idx + 1]
+                            # Linear interpolation
+                            ratio = (val - tick_val_low) / (tick_val_high - tick_val_low)
+                            scaled_val = pos_low + ratio * (pos_high - pos_low)
+                        else:
+                            scaled_val = high_tick_positions[closest_idx]
+                else:
+                    # Fallback
+                    scaled_val = 27 + (val - high_min) / (high_max - high_min) * 5
+                
+                # Add label for legend (same as Throughput)
                 label_text = method_display_names.get(method, method.replace('_', ' ')) if metric_name == 'Avg_Processing_Time' else ''
-                # Make sure color matches the method - use the actual method name from the tuple
-                method_color = colors.get(method, '#000000')  # Default to black if not found
+                method_color = colors.get(method, '#000000')
+                
                 ax.bar(
                     pos,
                     scaled_val,
@@ -310,12 +356,9 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
                     color=method_color,
                     alpha=0.7
                 )
-                # Add text annotation with actual value
-                ax.text(pos, scaled_val + (y_max - high_start) * 0.05, f'{val:.1f}',
+                # Add text annotation (same spacing as Throughput)
+                ax.text(pos, scaled_val + 0.5, f'{val:.1f}',
                        ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
-            
-            # Set y-axis ticks for lower range
-            ax.set_yticks([0, low_max * 0.5, low_max, low_max * 1.5, low_max * 2.0])
         else:
             # No clear separation, plot normally
             for i, method in enumerate(methods):
