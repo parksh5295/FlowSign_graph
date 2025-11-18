@@ -113,7 +113,7 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
             )
             # Add text annotation for low values too
             ax.text(pos, val + 0.5, f'{val:.1f}',
-                   ha='center', va='bottom', fontsize=52, color=colors[method], weight='bold')
+                   ha='center', va='bottom', fontsize=56, color=colors[method], weight='bold')
         
         # Find the middle point between SoTA ML (low values) and Snort/Snort+FlowSign (high values)
         # SoTA ML max is around 15, high values start at 27, so middle is around 21
@@ -158,7 +158,7 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
         
         # Set ticks and labels
         ax.set_yticks(all_ticks)
-        ax.set_yticklabels(all_tick_labels, fontsize=24)
+        ax.set_yticklabels(all_tick_labels, fontsize=72)  # Slightly reduced from original 24 for consistency
         
         # Plot high values scaled to fit in upper part of visible area
         # Map to the actual y-axis positions where ticks are located
@@ -207,7 +207,7 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
             # Add text annotation with actual value (similar spacing to SoTA ML)
             # SoTA ML uses val + 0.5, so use scaled_val + 0.5 for similar spacing
             ax.text(pos, scaled_val + 0.5, f'{val:.1f}',
-                       ha='center', va='bottom', fontsize=52, color=colors[method], weight='bold')
+                       ha='center', va='bottom', fontsize=56, color=colors[method], weight='bold')
     else:
         # Plot normally (for Avg_Processing_Time and p95_Latency)
         # Use EXACT same approach as Throughput: separate low and high values
@@ -323,7 +323,7 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
                 )
                 # Add text annotation
                 ax.text(pos, y_pos + low_range_end_pos * 0.05, f'{val:.1f}',
-                       ha='center', va='bottom', fontsize=52, color=colors[method], weight='bold')
+                       ha='center', va='bottom', fontsize=56, color=colors[method], weight='bold')
             
             # Add break symbol (same as Throughput)
             add_break_symbol(ax, break_position, x_center=0.5, width=1.4)
@@ -338,7 +338,7 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
             
             # Set ticks and labels (same as Throughput)
             ax.set_yticks(all_ticks)
-            ax.set_yticklabels(all_tick_labels, fontsize=78)
+            ax.set_yticklabels(all_tick_labels, fontsize=72)
             
             # Plot high values scaled to fit in upper part (EXACT same logic as Throughput)
             for (method, orig_i), pos, val in zip(high_methods, high_positions, high_values):
@@ -385,7 +385,7 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
                 )
                 # Add text annotation (same spacing as Throughput)
                 ax.text(pos, scaled_val + 0.5, f'{val:.1f}',
-                       ha='center', va='bottom', fontsize=52, color=colors[method], weight='bold')
+                       ha='center', va='bottom', fontsize=56, color=colors[method], weight='bold')
         else:
             # No clear separation, plot normally
             for i, method in enumerate(methods):
@@ -398,7 +398,7 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
                     color=colors[method]
                 )
                 ax.text(positions[i], val + max_val * 0.05, f'{val:.1f}',
-                       ha='center', va='bottom', fontsize=52, color=colors[method], weight='bold')
+                       ha='center', va='bottom', fontsize=56, color=colors[method], weight='bold')
             ax.set_ylim(0, max_val * 1.15 if max_val > 0 else 1)
             # Remove decimal points from y-axis for normal case
             ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{int(x)}'))
@@ -454,8 +454,8 @@ def main():
         # Plot metric with potential broken axis
         plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_names)
         
-        ax.set_title(ylabel, fontsize=82)  # Use ylabel (which includes units) as title
-        ax.tick_params(axis='y', labelsize=78)
+        ax.set_title(ylabel, fontsize=86)  # Use ylabel (which includes units) as title
+        ax.tick_params(axis='y', labelsize=72)
         ax.grid(True, alpha=0.3, linestyle='--')
     
     # Add a single legend at the top center, above all subplots
@@ -491,7 +491,7 @@ def main():
                loc='upper center',
                ncol=3,
                frameon=True,
-               fontsize=82,  # Match plot1.py
+               fontsize=76,  # Reduced font size
                bbox_to_anchor=(0.5, 1.03),  # Match plot1.py
                bbox_transform=fig.transFigure)
     
