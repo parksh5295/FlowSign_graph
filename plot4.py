@@ -158,7 +158,7 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
         
         # Set ticks and labels
         ax.set_yticks(all_ticks)
-        ax.set_yticklabels(all_tick_labels, fontsize=72)  # Slightly reduced from original 24 for consistency
+        ax.set_yticklabels(all_tick_labels, fontsize=71)  # Slightly reduced from original 24 for consistency
         
         # Plot high values scaled to fit in upper part of visible area
         # Map to the actual y-axis positions where ticks are located
@@ -338,7 +338,7 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
             
             # Set ticks and labels (same as Throughput)
             ax.set_yticks(all_ticks)
-            ax.set_yticklabels(all_tick_labels, fontsize=72)
+            ax.set_yticklabels(all_tick_labels, fontsize=71)
             
             # Plot high values scaled to fit in upper part (EXACT same logic as Throughput)
             for (method, orig_i), pos, val in zip(high_methods, high_positions, high_values):
@@ -454,8 +454,8 @@ def main():
         # Plot metric with potential broken axis
         plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_names)
         
-        ax.set_title(ylabel, fontsize=78)  # Use ylabel (which includes units) as title
-        ax.tick_params(axis='y', labelsize=72)
+        ax.set_title(ylabel, fontsize=77)  # Use ylabel (which includes units) as title
+        ax.tick_params(axis='y', labelsize=71)
         ax.grid(True, alpha=0.3, linestyle='--')
     
     # Add a single legend at the top center, above all subplots
@@ -491,7 +491,7 @@ def main():
                loc='upper center',
                ncol=3,
                frameon=True,
-               fontsize=76,  # Reduced font size
+               fontsize=75,  # Reduced font size
                bbox_to_anchor=(0.5, 1.04),  # 0.05 올림
                bbox_transform=fig.transFigure)
     

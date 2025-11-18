@@ -192,13 +192,13 @@ def main():
         all_ticks = lower_tick_positions + high_tick_positions
         all_tick_labels = [f'{int(t)}' for t in lower_ticks] + [f'{int(t)}' for t in high_ticks]
         ax.set_yticks(all_ticks)
-        ax.set_yticklabels(all_tick_labels, fontsize=78)
+        ax.set_yticklabels(all_tick_labels, fontsize=77)
         
         # x축 레이블을 그래프 위에 표시 (ylim 설정 후)
         y_max = ax.get_ylim()[1]
         for i, metric in enumerate(metrics):
             ax.text(i, y_max * 1.05, f'{metric} (%)', 
-                   ha='center', va='bottom', fontsize=80, transform=ax.transData)
+                   ha='center', va='bottom', fontsize=79, transform=ax.transData)
         # 기존 x축 레이블 숨기기
         ax.set_xticklabels([''] * len(metrics))
         
@@ -245,7 +245,7 @@ def main():
         y_max = ax.get_ylim()[1]
         for i, metric in enumerate(metrics):
             ax.text(i, y_max * 1.05, f'{metric} (%)', 
-                   ha='center', va='bottom', fontsize=80, transform=ax.transData)
+                   ha='center', va='bottom', fontsize=79, transform=ax.transData)
         # 기존 x축 레이블 숨기기
         ax.set_xticklabels([''] * len(metrics))
     
@@ -256,13 +256,13 @@ def main():
         y_max = ax.get_ylim()[1]
         for i, metric in enumerate(metrics):
             ax.text(i, y_max * 1.05, f'{metric} (%)', 
-                   ha='center', va='bottom', fontsize=80, transform=ax.transData)
+                   ha='center', va='bottom', fontsize=79, transform=ax.transData)
         # 기존 x축 레이블 숨기기
         ax.set_xticklabels([''] * len(metrics))
     
     ax.set_xticks(x)
     if not needs_break:
-        ax.tick_params(axis='y', labelsize=78)
+        ax.tick_params(axis='y', labelsize=77)
         # Remove decimal points from y-axis
         ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{int(x)}'))
     ax.grid(True, alpha=0.3, linestyle='--')
@@ -273,7 +273,7 @@ def main():
                loc='upper center',
                ncol=3,
                frameon=True,
-               fontsize=82,  # Match plot1.py
+               fontsize=81,  # Match plot1.py
                bbox_to_anchor=(0.5, 1.04),  # 조금 더 위로 올림
                bbox_transform=fig.transFigure)
     

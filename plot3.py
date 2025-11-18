@@ -148,7 +148,7 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
             all_ticks = lower_tick_positions_filtered + high_tick_positions
             all_tick_labels = [f'{int(t)}' for t in lower_ticks_filtered] + [f'{int(t)}' for t in high_tick_values]
             ax.set_yticks(all_ticks)
-            ax.set_yticklabels(all_tick_labels, fontsize=72)
+            ax.set_yticklabels(all_tick_labels, fontsize=71)
             ax.set_ylim(0, 35)
         else:
             # No break needed
@@ -227,7 +227,7 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
             all_ticks = lower_tick_positions_filtered + high_tick_positions_filtered
             all_tick_labels = [f'{int(t)}' for t in lower_ticks_filtered] + [f'{int(t)}' for t in high_tick_values_filtered]
             ax.set_yticks(all_ticks)
-            ax.set_yticklabels(all_tick_labels, fontsize=72)
+            ax.set_yticklabels(all_tick_labels, fontsize=71)
             ax.set_ylim(0, 36)
         else:
             # No break needed
@@ -357,7 +357,7 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
                 all_tick_labels = [f'{int(t)}' for t in lower_ticks_filtered] + [f'{int(t)}' for t in high_tick_values_filtered]
                 ax.set_ylim(0, 36)
             ax.set_yticks(all_ticks)
-            ax.set_yticklabels(all_tick_labels, fontsize=72)
+            ax.set_yticklabels(all_tick_labels, fontsize=71)
         else:
             # No break needed
             for i, method in enumerate(methods):
@@ -391,9 +391,9 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
         ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{int(x)}'))
     
     # Set title and formatting
-    ax.set_title(title, fontsize=78)
+    ax.set_title(title, fontsize=77)
     ax.set_xticks([])  # No x-axis labels for individual subplots
-    ax.tick_params(axis='y', labelsize=72)
+    ax.tick_params(axis='y', labelsize=71)
     ax.grid(True, alpha=0.3, linestyle='--')
     ax.set_xlim(-0.2, 1.2)
 
@@ -508,7 +508,7 @@ def main():
                             loc='upper center',
                             ncol=len(method_handles),
                             frameon=True,
-                            fontsize=76,
+                            fontsize=75,
                             bbox_to_anchor=(0.5, 1.03),
                             bbox_transform=fig.transFigure)
         
@@ -517,7 +517,7 @@ def main():
                             loc='upper center',
                             ncol=1,
                             frameon=True,
-                            fontsize=76,
+                            fontsize=75,
                             bbox_to_anchor=(0.5, 0.925),
                             bbox_transform=fig.transFigure)
     else:
