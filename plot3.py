@@ -173,6 +173,8 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
             # Lower ticks
             tick_step = max(10, int(low_max / 5))
             lower_ticks = list(range(0, int(low_max) + tick_step, tick_step))
+            # Remove ticks that exceed low_max
+            lower_ticks = [t for t in lower_ticks if t <= int(low_max)]
             lower_tick_positions = [i * 5 for i in range(len(lower_ticks))]
             
             # High ticks for BAE max
@@ -279,6 +281,8 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
             # Lower ticks
             tick_step = max(10, int(low_max / 5))
             lower_ticks = list(range(0, int(low_max) + tick_step, tick_step))
+            # Remove ticks that exceed low_max
+            lower_ticks = [t for t in lower_ticks if t <= int(low_max)]
             lower_tick_positions = [i * 5 for i in range(len(lower_ticks))]
             
             # High ticks (for BAE mean)
@@ -493,7 +497,7 @@ def main():
                             ncol=len(method_handles),
                             frameon=True,
                             fontsize=76,
-                            bbox_to_anchor=(0.5, 1.06),
+                            bbox_to_anchor=(0.5, 1.08),
                             bbox_transform=fig.transFigure)
         
         # Second row: Max (lower, with more spacing)
@@ -502,7 +506,7 @@ def main():
                             ncol=1,
                             frameon=True,
                             fontsize=76,
-                            bbox_to_anchor=(0.5, 0.97),
+                            bbox_to_anchor=(0.5, 0.99),
                             bbox_transform=fig.transFigure)
     else:
         fig.legend(all_handles, all_labels,
@@ -510,10 +514,10 @@ def main():
                    ncol=len(all_handles),
                    frameon=True,
                    fontsize=76,
-                   bbox_to_anchor=(0.5, 1.06),
+                   bbox_to_anchor=(0.5, 1.08),
                    bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0.02, 0.01, 1, 0.85])  # Reduced top margin to prevent legend overlap
+    fig.tight_layout(rect=[0.02, 0.01, 1, 0.82])  # Reduced top margin to prevent legend overlap
     
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
