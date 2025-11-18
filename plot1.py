@@ -68,11 +68,11 @@ def main():
         # Snort 값
         snort_val = df["F1_snort"].iloc[i]
         ax_f1.text(i - bar_width / 2, snort_val + 0.5, f'{snort_val:.1f}',
-                   ha='center', va='bottom', fontsize=46, color="#C0392B", weight='bold')
+                   ha='center', va='bottom', fontsize=44, color="#C0392B", weight='bold')
         # Snort + FlowSign 값
         flowsign_val = df["F1_snort_FlowSign"].iloc[i]
         ax_f1.text(i + bar_width / 2, flowsign_val + 0.5, f'{flowsign_val:.1f}',
-                   ha='center', va='bottom', fontsize=46, color="#229954", weight='bold')
+                   ha='center', va='bottom', fontsize=44, color="#229954", weight='bold')
 
     # ----- Accuracy subplot -----
     ax_acc = axes[1]
@@ -108,11 +108,11 @@ def main():
         # Snort 값
         snort_val = df["Accuracy_snort"].iloc[i]
         ax_acc.text(i - bar_width / 2, snort_val + 0.5, f'{snort_val:.1f}',
-                   ha='center', va='bottom', fontsize=46, color="#C0392B", weight='bold')
+                   ha='center', va='bottom', fontsize=44, color="#C0392B", weight='bold')
         # Snort + FlowSign 값
         flowsign_val = df["Accuracy_snort_FlowSign"].iloc[i]
         ax_acc.text(i + bar_width / 2, flowsign_val + 0.5, f'{flowsign_val:.1f}',
-                   ha='center', va='bottom', fontsize=46, color="#229954", weight='bold')
+                   ha='center', va='bottom', fontsize=44, color="#229954", weight='bold')
 
     # Add a single legend at the top center, above the graph area
     # Get handles and labels from one of the subplots
@@ -128,7 +128,7 @@ def main():
     # 높이가 80%로 줄어들었으므로 위쪽 여백 절대 크기 유지를 위해 top 값 조정
     # 원래: 높이 13.5, top=0.868 → 위쪽 여백 약 1.78
     # 현재: 높이 10.8, 같은 여백 유지 → top = 1 - (1.78/10.8) = 0.835
-    fig.tight_layout(rect=[0, 0.01, 1, 0.83])
+    fig.tight_layout(rect=[0, 0.01, 1, 0.829])
 
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
