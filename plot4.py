@@ -15,21 +15,28 @@ def add_break_symbol(ax, y_break_pos, x_center=0.5, width=1.5):
     
     # First wavy line
     y_data1 = y_break_pos + 0.01 * y_range * np.sin(15 * np.pi * (x_data - (x_center - width/2)) / width)
-    ax.plot(x_data, y_data1, 'k-', linewidth=3, clip_on=False, zorder=10)
+    ax.plot(x_data, y_data1, 'k-', linewidth=3, clip_on=False, zorder=15)
     
     # Second wavy line (slightly offset)
     y_data2 = y_break_pos + 0.015 * y_range * np.sin(15 * np.pi * (x_data - (x_center - width/2)) / width)
-    ax.plot(x_data, y_data2, 'k-', linewidth=3, clip_on=False, zorder=10)
+    ax.plot(x_data, y_data2, 'k-', linewidth=3, clip_on=False, zorder=15)
     
     # Add small vertical lines at ends
     ax.plot([x_center - width/2, x_center - width/2], 
             [y_break_pos - 0.008 * y_range, 
              y_break_pos + 0.008 * y_range], 
-            'k-', linewidth=3, clip_on=False, zorder=10)
+            'k-', linewidth=3, clip_on=False, zorder=15)
     ax.plot([x_center + width/2, x_center + width/2], 
             [y_break_pos - 0.008 * y_range, 
              y_break_pos + 0.008 * y_range], 
-            'k-', linewidth=3, clip_on=False, zorder=10)
+            'k-', linewidth=3, clip_on=False, zorder=15)
+    
+    # Draw white rectangle to cover top spine in the break area
+    from matplotlib.patches import Rectangle
+    rect = Rectangle((x_center - width/2, y_break_pos - 0.01 * y_range), 
+                     width, 0.02 * y_range,
+                     facecolor='white', edgecolor='none', zorder=14, transform=ax.transData)
+    ax.add_patch(rect)
 
 
 def plot_metric(ax, df, metric_name, methods, colors, bar_width):
@@ -86,12 +93,12 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width):
         # Set y-axis to show lower range (0-20)
         ax.set_ylim(0, 20)
         
-        # Add break symbol at top of lower range (wider than graph)
-        # x-axis range is -0.2 to 1.2, so width should be > 1.4
-        add_break_symbol(ax, 17, x_center=0.5, width=2.0)
+        # Add break symbol at top of lower range (within graph bounds)
+        # x-axis range is -0.2 to 1.2, so keep width within this range
+        add_break_symbol(ax, 17, x_center=0.5, width=1.0)
         
-        # Hide top spine to show break
-        ax.spines['top'].set_visible(False)
+        # Keep top spine visible but it will be covered by the break symbol
+        ax.spines['top'].set_visible(True)
         
         # Set y-axis ticks for lower range
         ax.set_yticks([0, 5, 10, 15])
