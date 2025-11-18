@@ -52,8 +52,11 @@ def add_break_symbol(ax, y_break_pos, x_center=0.5, width=1.5):
             'k-', linewidth=3, clip_on=False, zorder=15)
 
 
-def plot_metric(ax, df, metric_name, methods, colors, bar_width):
+def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_names=None):
     """Plot bars for a metric, with broken axis if values differ significantly."""
+    if method_display_names is None:
+        method_display_names = {m: m.replace('_', ' ') for m in methods}
+    
     values = [df[df['Metric'] == metric_name][method].values[0] for method in methods]
     max_val = max(values)
     min_val = min(values)
@@ -99,19 +102,19 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width):
                 pos,
                 val,
                 width=bar_width,
-                label=method.replace('_', ' ') if metric_name == 'Avg_Processing_Time' else '',
+                label=method_display_names.get(method, method.replace('_', ' ')) if metric_name == 'Avg_Processing_Time' else '',
                 color=colors[method]
             )
             # Add text annotation for low values too
             ax.text(pos, val + 0.5, f'{val:.1f}',
                    ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
         
-        # Set y-axis to show lower range (0-20)
-        ax.set_ylim(0, 20)
+        # Set y-axis to show lower range (0-18) to make SoTA ML appear lower
+        ax.set_ylim(0, 18)
         
-        # Add break symbol at top of lower range (slightly lower position)
+        # Add break symbol at top of lower range (adjusted for new y-axis range)
         # x-axis range is -0.2 to 1.2, so keep width within this range
-        add_break_symbol(ax, 16, x_center=0.5, width=1.0)
+        add_break_symbol(ax, 14, x_center=0.5, width=1.0)
         
         # Keep top spine visible but it will be covered by the break symbol
         ax.spines['top'].set_visible(True)
@@ -125,9 +128,9 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width):
         
         # Plot high values scaled to fit in upper part of visible area
         for (method, orig_i), pos, val in zip(high_methods, high_positions, high_values):
-            # Scale high value to fit in upper range (17-20)
-            # Map from [high_min, high_max] to [17, 20]
-            scaled_val = 17 + (val - high_min) / (high_max - high_min) * 3
+            # Scale high value to fit in upper range (15-18)
+            # Map from [high_min, high_max] to [15, 18]
+            scaled_val = 15 + (val - high_min) / (high_max - high_min) * 3
             ax.bar(
                 pos,
                 scaled_val,
@@ -135,14 +138,14 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width):
                 color=colors[method],
                 alpha=0.7
             )
-            # Add text annotation with actual value (lower position to avoid boundary)
-            ax.text(pos, 18.5, f'{val:.1f}',
+            # Add text annotation with actual value (adjusted for new y-axis range)
+            ax.text(pos, 17.5, f'{val:.1f}',
                    ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
         
         # Add custom y-axis label for upper range
         # Create a second set of ticks for upper range
         upper_ticks = np.linspace(high_min, int(high_max), 5)
-        upper_tick_positions = 17 + (upper_ticks - high_min) / (high_max - high_min) * 3
+        upper_tick_positions = 15 + (upper_ticks - high_min) / (high_max - high_min) * 3
         # Add secondary y-axis labels on the right
         ax2 = ax.twinx()
         ax2.set_ylim(ax.get_ylim())
@@ -153,7 +156,7 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width):
         ax2.spines['left'].set_visible(False)
         ax2.spines['bottom'].set_visible(False)
     else:
-        # Plot normally
+        # Plot normally (for Avg_Processing_Time and p95_Latency)
         positions = [x_center - bar_width, x_center, x_center + bar_width]
         for i, method in enumerate(methods):
             val = df[df['Metric'] == metric_name][method].values[0]
@@ -161,10 +164,16 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width):
                 positions[i],
                 val,
                 width=bar_width,
-                label=method.replace('_', ' ') if metric_name == 'Avg_Processing_Time' else '',
+                label=method_display_names.get(method, method.replace('_', ' ')) if metric_name == 'Avg_Processing_Time' else '',
                 color=colors[method]
             )
-        ax.set_ylim(0, max_val * 1.2 if max_val > 0 else 1)
+            # Add text annotation above bars
+            ax.text(positions[i], val + max_val * 0.05, f'{val:.1f}',
+                   ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
+        
+        # Reduce gap by using smaller y-axis range (focus on the range where values are)
+        # Use a smaller multiplier to reduce the gap
+        ax.set_ylim(0, max_val * 1.15 if max_val > 0 else 1)
     
     ax.set_xlim(-0.2, 1.2)
     ax.set_xticks([])
@@ -189,11 +198,18 @@ def main():
     # Color scheme
     colors = {
         'Snort': '#E74C3C',  # Red
-        'Snort_Proposed': '#27AE60',  # Green
+        'Snort_Proposed': '#27AE60',  # Green (will be displayed as "Snort + FlowSign")
         'SoTA_ML': '#3498DB'  # Blue
     }
     
     methods = ['Snort', 'Snort_Proposed', 'SoTA_ML']
+    
+    # Method display names
+    method_display_names = {
+        'Snort': 'Snort',
+        'Snort_Proposed': 'Snort + FlowSign',
+        'SoTA_ML': 'SoTA ML'
+    }
     bar_width = 0.25
     
     # Metric names and y-axis labels (horizontal layout)
@@ -208,7 +224,7 @@ def main():
         ax.set_facecolor('white')
         
         # Plot metric with potential broken axis
-        plot_metric(ax, df, metric_name, methods, colors, bar_width)
+        plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_names)
         
         ax.set_title(metric_name.replace('_', ' '), fontsize=30)
         ax.set_ylabel(ylabel, fontsize=27)
