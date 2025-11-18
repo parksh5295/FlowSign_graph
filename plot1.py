@@ -55,21 +55,24 @@ def main():
     ax_f1.set_xticklabels(datasets, fontsize=72, rotation=0, ha='center')
     ax_f1.tick_params(axis='x', pad=1)  # x축 레이블을 아래로 내림
     # y축 제목 제거
-    # y축을 100 넘어가게 설정하되 y축 값은 표기하지 않음
+    # y축을 100 넘어가게 설정하되 y축 틱은 100까지만 표시
     ax_f1.set_ylim(0, 110)  # 100 넘어가게 설정
-    ax_f1.tick_params(axis='y', labelsize=78, labelleft=False)  # y축 레이블 숨김
+    ax_f1.tick_params(axis='y', labelsize=78)
+    # y축 틱을 0-100까지만 표시 (100 넘어가는 값은 표기하지 않음)
+    ax_f1.set_yticks(range(0, 101, 20))  # 0, 20, 40, 60, 80, 100만 표시
+    ax_f1.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{int(x)}' if x <= 100 else ''))
     ax_f1.grid(True, alpha=0.3, linestyle='--')
     
     # 그래프 바 위에 값 표기
     for i in range(len(datasets)):
         # Snort 값
         snort_val = df["F1_snort"].iloc[i]
-        ax_f1.text(i - bar_width / 2, snort_val + 2, f'{snort_val:.1f}',
-                   ha='center', va='bottom', fontsize=56, color="#C0392B", weight='bold')
+        ax_f1.text(i - bar_width / 2, snort_val + 0.5, f'{snort_val:.1f}',
+                   ha='center', va='bottom', fontsize=48, color="#C0392B", weight='bold')
         # Snort + FlowSign 값
         flowsign_val = df["F1_snort_FlowSign"].iloc[i]
-        ax_f1.text(i + bar_width / 2, flowsign_val + 2, f'{flowsign_val:.1f}',
-                   ha='center', va='bottom', fontsize=56, color="#229954", weight='bold')
+        ax_f1.text(i + bar_width / 2, flowsign_val + 0.5, f'{flowsign_val:.1f}',
+                   ha='center', va='bottom', fontsize=48, color="#229954", weight='bold')
 
     # ----- Accuracy subplot -----
     ax_acc = axes[1]
@@ -92,21 +95,24 @@ def main():
     ax_acc.set_xticks(list(x))
     ax_acc.set_xticklabels(datasets, fontsize=72, rotation=0, ha='center')
     ax_acc.tick_params(axis='x', pad=1)  # x축 레이블을 아래로 내림
-    # y축을 100 넘어가게 설정하되 y축 값은 표기하지 않음
+    # y축을 100 넘어가게 설정하되 y축 틱은 100까지만 표시
     ax_acc.set_ylim(0, 110)  # 100 넘어가게 설정
-    ax_acc.tick_params(axis='y', labelsize=78, labelleft=False)  # y축 레이블 숨김
+    ax_acc.tick_params(axis='y', labelsize=78)
+    # y축 틱을 0-100까지만 표시 (100 넘어가는 값은 표기하지 않음)
+    ax_acc.set_yticks(range(0, 101, 20))  # 0, 20, 40, 60, 80, 100만 표시
+    ax_acc.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{int(x)}' if x <= 100 else ''))
     ax_acc.grid(True, alpha=0.3, linestyle='--')
     
     # 그래프 바 위에 값 표기
     for i in range(len(datasets)):
         # Snort 값
         snort_val = df["Accuracy_snort"].iloc[i]
-        ax_acc.text(i - bar_width / 2, snort_val + 2, f'{snort_val:.1f}',
-                   ha='center', va='bottom', fontsize=56, color="#C0392B", weight='bold')
+        ax_acc.text(i - bar_width / 2, snort_val + 0.5, f'{snort_val:.1f}',
+                   ha='center', va='bottom', fontsize=48, color="#C0392B", weight='bold')
         # Snort + FlowSign 값
         flowsign_val = df["Accuracy_snort_FlowSign"].iloc[i]
-        ax_acc.text(i + bar_width / 2, flowsign_val + 2, f'{flowsign_val:.1f}',
-                   ha='center', va='bottom', fontsize=56, color="#229954", weight='bold')
+        ax_acc.text(i + bar_width / 2, flowsign_val + 0.5, f'{flowsign_val:.1f}',
+                   ha='center', va='bottom', fontsize=48, color="#229954", weight='bold')
 
     # Add a single legend at the top center, above the graph area
     # Get handles and labels from one of the subplots
