@@ -139,10 +139,11 @@ def main():
         # Add break symbol (across the entire x-axis range - one long wavy line)
         # 전체 x축에 걸쳐 하나의 긴 물결을 그림
         # [물결 좌우 길이 조정] x_min, x_max 값을 조정하여 물결 길이 변경
-        # 더 길게: x_min을 더 작게 (예: -0.8), x_max를 더 크게 (예: len(metrics) - 0.2)
-        # 더 짧게: x_min을 더 크게 (예: -0.3), x_max를 더 작게 (예: len(metrics) - 0.7)
-        x_min = -1
-        x_max = len(metrics) - 0.0
+        # x_data = np.linspace(x_min, x_max, 500)로 물결을 그리므로, 이 값들이 물결의 좌우 범위를 결정합니다
+        # 더 넓게: x_min을 더 작게, x_max를 더 크게 설정
+        # 더 좁게: x_min을 더 크게, x_max를 더 작게 설정
+        x_min = -1.0  # 좌측으로 더 넓히기 위해 -0.5에서 -1.0으로 변경
+        x_max = len(metrics) + 0.5  # 우측으로 더 넓히기 위해 len(metrics) - 0.5에서 len(metrics) + 0.5로 변경
         x_center = (x_min + x_max) / 2
         width = x_max - x_min + 0.5  # 전체 x축 범위 + 여유
         
