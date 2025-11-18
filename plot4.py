@@ -137,8 +137,13 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
         # Start from high_min rounded to nearest 5, then add 5, 10, 15, 20
         start_tick = int(np.ceil(high_min / 5) * 5)  # Round up to nearest 5
         high_tick_values = [start_tick + i * 5 for i in range(5) if start_tick + i * 5 <= int(high_max)]
-        # Map to y-axis positions (27-32 range)
-        high_tick_positions = [27 + (t - high_min) / (high_max - high_min) * 5 for t in high_tick_values]
+        # Map to y-axis positions (27-32 range) with EQUAL spacing (not proportional)
+        # Use 5 equal intervals: 27, 28, 29, 30, 31, 32
+        num_ticks = len(high_tick_values)
+        if num_ticks > 1:
+            high_tick_positions = np.linspace(27, 32, num_ticks).tolist()
+        else:
+            high_tick_positions = [27 + (t - high_min) / (high_max - high_min) * 5 for t in high_tick_values]
         
         # Combine lower and upper ticks (gap between 15 and 27 shows the break)
         all_ticks = lower_ticks + high_tick_positions
@@ -184,18 +189,32 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
         sorted_vals = sorted(values)
         if len(sorted_vals) >= 2 and sorted_vals[-1] > sorted_vals[0] * 10:
             # Significant gap exists, use broken axis approach
-            threshold = sorted_vals[0] * 5  # Threshold between low and high
-            
+            # For Avg_Processing_Time and p95_Latency: 
+            # Snort and Snort+FlowSign are low, SoTA ML is high
+            # Use method name to determine classification (more reliable)
             for i, method in enumerate(methods):
                 val = df[df['Metric'] == metric_name][method].values[0]
-                if val <= threshold:
+                # Snort and Snort_Proposed are typically low values
+                # SoTA_ML is typically high value
+                if method in ['Snort', 'Snort_Proposed']:
                     low_values.append(val)
                     low_positions.append(positions[i])
                     low_methods.append((method, i))
-                else:
+                elif method == 'SoTA_ML':
                     high_values.append(val)
                     high_positions.append(positions[i])
                     high_methods.append((method, i))
+                else:
+                    # Fallback: use value-based threshold
+                    threshold = sorted_vals[0] * 5
+                    if val <= threshold:
+                        low_values.append(val)
+                        low_positions.append(positions[i])
+                        low_methods.append((method, i))
+                    else:
+                        high_values.append(val)
+                        high_positions.append(positions[i])
+                        high_methods.append((method, i))
             
             if low_values and high_values:
                 # Use broken axis (similar to Throughput)
