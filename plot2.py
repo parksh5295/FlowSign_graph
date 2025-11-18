@@ -177,14 +177,14 @@ def main():
         
         # Draw the two wavy lines
         # [두께 조정] linewidth 값을 조정하여 물결 두께 변경 (더 두껍게: 값 증가)
-        ax.plot(x_data, y_data1, 'k-', linewidth=12, clip_on=False, zorder=15)  # linewidth=7 -> 10으로 증가
-        ax.plot(x_data, y_data2, 'k-', linewidth=12, clip_on=False, zorder=15)  # linewidth=7 -> 10으로 증가
+        ax.plot(x_data, y_data1, 'k-', linewidth=7, clip_on=False, zorder=15)  # linewidth=7 -> 10으로 증가
+        ax.plot(x_data, y_data2, 'k-', linewidth=7, clip_on=False, zorder=15)  # linewidth=7 -> 10으로 증가
         
         # Add small vertical lines at ends
         ax.plot([x_data[0], x_data[0]], [y_data1[0], y_data2[0]], 
-                'k-', linewidth=5, clip_on=False, zorder=15)  # linewidth=5 -> 10으로 증가
+                'k-', linewidth=12, clip_on=False, zorder=15)  # linewidth=5 -> 10으로 증가
         ax.plot([x_data[-1], x_data[-1]], [y_data1[-1], y_data2[-1]], 
-                'k-', linewidth=5, clip_on=False, zorder=15)  # linewidth=5 -> 10으로 증가
+                'k-', linewidth=12, clip_on=False, zorder=15)  # linewidth=5 -> 10으로 증가
         
         ax.spines['top'].set_visible(True)
         
