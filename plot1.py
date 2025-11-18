@@ -94,7 +94,7 @@ def main():
                ncol=2, 
                frameon=True,
                fontsize=82,
-               bbox_to_anchor=(0.5, 1.03),
+               bbox_to_anchor=(0.5, 1.04),  # Moved legend up
                bbox_transform=fig.transFigure)
     
     fig.tight_layout(rect=[0, 0.01, 1, 0.90])
