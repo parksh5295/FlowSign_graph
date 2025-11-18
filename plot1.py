@@ -53,7 +53,8 @@ def main():
     ax_f1.set_title("F1 Score (%)", fontsize=84)
     ax_f1.set_xticks(list(x))
     ax_f1.set_xticklabels(datasets, fontsize=72, rotation=0, ha='center')
-    ax_f1.set_ylabel("F1 Score (%)", fontsize=80)
+    ax_f1.tick_params(axis='x', pad=0.5)  # x축 레이블을 아래로 내림
+    # y축 제목 제거
     ax_f1.set_ylim(0, 100)
     ax_f1.tick_params(axis='y', labelsize=78)
     # Remove decimal points from y-axis
@@ -80,6 +81,7 @@ def main():
     ax_acc.set_title("Accuracy (%)", fontsize=84)
     ax_acc.set_xticks(list(x))
     ax_acc.set_xticklabels(datasets, fontsize=72, rotation=0, ha='center')
+    ax_acc.tick_params(axis='x', pad=0.5)  # x축 레이블을 아래로 내림
     ax_acc.set_ylim(0, 100)
     ax_acc.tick_params(axis='y', labelsize=78)
     # Remove decimal points from y-axis

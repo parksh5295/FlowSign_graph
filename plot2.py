@@ -192,6 +192,13 @@ def main():
         ax.set_yticks(all_ticks)
         ax.set_yticklabels(all_tick_labels, fontsize=78)
         
+        # x축 레이블을 그래프 위에 표시 (ylim 설정 후)
+        for i, metric in enumerate(metrics):
+            ax.text(i, ax.get_ylim()[1] * 1.05, f'{metric} (%)', 
+                   ha='center', va='bottom', fontsize=80, transform=ax.get_xaxis_transform())
+        # 기존 x축 레이블 숨기기
+        ax.set_xticklabels([''] * len(metrics))
+        
         # 각 막대 위에 값 표시
         for metric_idx, metric in enumerate(metrics):
             metric_df = df[df['Metric'] == metric]
@@ -230,12 +237,25 @@ def main():
         # 100 위에 여유 공간을 주기 위해 ylim 조정
         current_ylim = ax.get_ylim()
         ax.set_ylim(current_ylim[0], current_ylim[1] * 1.1)  # 10% 여유 공간 추가
+        
+        # x축 레이블을 그래프 위에 표시 (ylim 설정 후)
+        for i, metric in enumerate(metrics):
+            ax.text(i, ax.get_ylim()[1] * 1.05, f'{metric} (%)', 
+                   ha='center', va='bottom', fontsize=80, transform=ax.get_xaxis_transform())
+        # 기존 x축 레이블 숨기기
+        ax.set_xticklabels([''] * len(metrics))
     
-    # Match plot1.py's font sizes
-    ax.set_title("Performance Metrics", fontsize=84)
+    # 그래프 제목과 y축 제목 제거
+    # broken axis가 없는 경우에도 x축 레이블을 그래프 위에 표시
+    if not needs_break:
+        # x축 레이블을 그래프 위에 표시 (ylim 설정 후)
+        for i, metric in enumerate(metrics):
+            ax.text(i, ax.get_ylim()[1] * 1.05, f'{metric} (%)', 
+                   ha='center', va='bottom', fontsize=80, transform=ax.get_xaxis_transform())
+        # 기존 x축 레이블 숨기기
+        ax.set_xticklabels([''] * len(metrics))
+    
     ax.set_xticks(x)
-    ax.set_xticklabels(metrics, fontsize=80)
-    ax.set_ylabel("Value", fontsize=82)
     if not needs_break:
         ax.tick_params(axis='y', labelsize=78)
         # Remove decimal points from y-axis
