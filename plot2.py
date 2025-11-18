@@ -89,7 +89,7 @@ def main():
     method_display_names = {
         'Snort': 'Snort',
         'Snort_Proposed': 'Snort + FlowSign',
-        'SoTA_ML': 'SoTA ML'
+        'SoTA_ML': 'BAE-UQ-IDS'
     }
     
     # Check if we need broken axis (if max value is much larger than min non-zero value)
@@ -203,13 +203,13 @@ def main():
                         y_pos = (val / low_max) * low_range_end_pos if low_max > 0 else 0
                         text_y = y_pos + 1  # 막대 위에 표시
                         ax.text(positions[i][metric_idx], text_y, f'{val:.2f}',
-                               ha='center', va='bottom', fontsize=56, color=colors[method], weight='bold')
+                               ha='center', va='bottom', fontsize=50, color=colors[method], weight='bold')
                     else:
                         # Upper range에 있는 경우
                         scaled_val = high_start + (val - high_min) / (100 - high_min) * 8
                         text_y = scaled_val + 0.5  # 막대 위에 표시
                         ax.text(positions[i][metric_idx], text_y, f'{val:.2f}',
-                               ha='center', va='bottom', fontsize=56, color=colors[method], weight='bold')
+                               ha='center', va='bottom', fontsize=50, color=colors[method], weight='bold')
     else:
         # Normal plotting without broken axis
         for i, method in enumerate(methods):
@@ -225,7 +225,7 @@ def main():
                 height = bar.get_height()
                 ax.text(bar.get_x() + bar.get_width() / 2., height,
                        f'{df[method].iloc[j]:.2f}',
-                       ha='center', va='bottom', fontsize=56, color=colors[method], weight='bold')
+                       ha='center', va='bottom', fontsize=50, color=colors[method], weight='bold')
         
         # 100 위에 여유 공간을 주기 위해 ylim 조정
         current_ylim = ax.get_ylim()
@@ -249,10 +249,10 @@ def main():
                ncol=3,
                frameon=True,
                fontsize=82,  # Match plot1.py
-               bbox_to_anchor=(0.5, 1.03),  # Match plot1.py
+               bbox_to_anchor=(0.5, 1.05),  # 조금 더 위로 올림
                bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0, 0.01, 1, 0.90])  # Match plot1.py
+    fig.tight_layout(rect=[0, 0.01, 1, 0.89])  # Match plot1.py
     
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
