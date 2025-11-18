@@ -503,22 +503,22 @@ def main():
     # Create legend in 2 rows: methods on top, Max below
     # 위쪽 여백을 범례 2개가 들어갈 수 있을 만큼 키워서 범례 2개를 배열
     if max_handle:
-        # First row: methods (higher up) - 원래대로 되돌림
+        # First row: methods (higher up) - 아래로 내림
         legend1 = fig.legend(method_handles, method_labels,
                             loc='upper center',
                             ncol=len(method_handles),
                             frameon=True,
                             fontsize=76,
-                            bbox_to_anchor=(0.5, 1.06),
+                            bbox_to_anchor=(0.5, 1.02),
                             bbox_transform=fig.transFigure)
         
-        # Second row: Max (lower) - 원래대로 되돌림
+        # Second row: Max (lower) - 아래로 내림
         legend2 = fig.legend([max_handle], [max_label],
                             loc='upper center',
                             ncol=1,
                             frameon=True,
                             fontsize=76,
-                            bbox_to_anchor=(0.5, 0.97),
+                            bbox_to_anchor=(0.5, 0.94),
                             bbox_transform=fig.transFigure)
     else:
         fig.legend(all_handles, all_labels,
@@ -526,7 +526,7 @@ def main():
                    ncol=len(all_handles),
                    frameon=True,
                    fontsize=76,
-                   bbox_to_anchor=(0.5, 1.06),
+                   bbox_to_anchor=(0.5, 1.02),
                    bbox_transform=fig.transFigure)
     
     # 위쪽 여백을 범례 2개가 들어갈 수 있을 만큼 키움
