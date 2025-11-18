@@ -159,13 +159,37 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
         # Plot high values scaled to fit in upper part of visible area
         # Map to the actual y-axis positions where ticks are located
         # high_tick_positions are at 27, 32, 37, 42... (5 units apart)
-        # Map values to match these tick positions
+        # Map values to match these tick positions exactly
         for (method, orig_i), pos, val in zip(high_methods, high_positions, high_values):
             if num_ticks > 1:
-                # Use the range from first to last tick position
-                tick_range_start = high_tick_positions[0]  # 27
-                tick_range_end = high_tick_positions[-1]   # e.g., 32, 37, 42...
-                scaled_val = tick_range_start + (val - high_min) / (high_max - high_min) * (tick_range_end - tick_range_start)
+                # Find the closest tick value and use its position
+                # Interpolate between tick positions based on actual value
+                # For example, if val=370.2 and ticks are [360, 365, 370, 375, 380]
+                # Find which two ticks it's between and interpolate
+                closest_idx = 0
+                for i, tick_val in enumerate(high_tick_values):
+                    if val >= tick_val:
+                        closest_idx = i
+                    else:
+                        break
+                
+                # If value is exactly at a tick or beyond the last tick
+                if closest_idx >= len(high_tick_positions) - 1:
+                    scaled_val = high_tick_positions[-1]
+                elif val == high_tick_values[closest_idx]:
+                    scaled_val = high_tick_positions[closest_idx]
+                else:
+                    # Interpolate between two adjacent ticks
+                    if closest_idx < len(high_tick_positions) - 1:
+                        tick_val_low = high_tick_values[closest_idx]
+                        tick_val_high = high_tick_values[closest_idx + 1]
+                        pos_low = high_tick_positions[closest_idx]
+                        pos_high = high_tick_positions[closest_idx + 1]
+                        # Linear interpolation
+                        ratio = (val - tick_val_low) / (tick_val_high - tick_val_low)
+                        scaled_val = pos_low + ratio * (pos_high - pos_low)
+                    else:
+                        scaled_val = high_tick_positions[closest_idx]
             else:
                 # Fallback to original scaling
                 scaled_val = 27 + (val - high_min) / (high_max - high_min) * 5
@@ -197,27 +221,26 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
         high_methods = []
         
         # Determine threshold: if max is much larger than min, use broken axis
+        # For Avg_Processing_Time and p95_Latency: Always separate by method name
+        # Snort and Snort+FlowSign are low, SoTA ML is high
         sorted_vals = sorted(values)
-        if len(sorted_vals) >= 2 and sorted_vals[-1] > sorted_vals[0] * 10:
-            # Significant gap exists, use broken axis approach
-            # For Avg_Processing_Time and p95_Latency: 
-            # Snort and Snort+FlowSign are low, SoTA ML is high
-            # Use method name to determine classification (more reliable)
-            for i, method in enumerate(methods):
-                val = df[df['Metric'] == metric_name][method].values[0]
-                # Debug: print method name and value to verify classification
-                # Snort and Snort_Proposed are typically low values
-                # SoTA_ML is typically high value
-                if method == 'Snort' or method == 'Snort_Proposed':
-                    low_values.append(val)
-                    low_positions.append(positions[i])
-                    low_methods.append((method, i))
-                elif method == 'SoTA_ML':
-                    high_values.append(val)
-                    high_positions.append(positions[i])
-                    high_methods.append((method, i))
-                else:
-                    # Fallback: use value-based threshold
+        
+        # Always classify by method name for these metrics
+        for i, method in enumerate(methods):
+            val = df[df['Metric'] == metric_name][method].values[0]
+            # Snort and Snort_Proposed are typically low values
+            # SoTA_ML is typically high value
+            if method == 'Snort' or method == 'Snort_Proposed':
+                low_values.append(val)
+                low_positions.append(positions[i])
+                low_methods.append((method, i))
+            elif method == 'SoTA_ML':
+                high_values.append(val)
+                high_positions.append(positions[i])
+                high_methods.append((method, i))
+            else:
+                # Fallback: use value-based threshold
+                if len(sorted_vals) >= 2:
                     threshold = sorted_vals[0] * 5
                     if val <= threshold:
                         low_values.append(val)
@@ -227,8 +250,14 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
                         high_values.append(val)
                         high_positions.append(positions[i])
                         high_methods.append((method, i))
-            
-            if low_values and high_values:
+                else:
+                    # Default to low if can't determine
+                    low_values.append(val)
+                    low_positions.append(positions[i])
+                    low_methods.append((method, i))
+        
+        # Use broken axis if we have both low and high values
+        if low_values and high_values:
                 # Use broken axis (similar to Throughput)
                 low_max = max(low_values)
                 high_min = min(high_values)
