@@ -52,7 +52,7 @@ def main():
     )
     ax_f1.set_title("F1 Score (%)", fontsize=84)
     ax_f1.set_xticks(list(x))
-    ax_f1.set_xticklabels(datasets, fontsize=80, rotation=90, ha='center')
+    ax_f1.set_xticklabels(datasets, fontsize=80, rotation=0, ha='center')
     ax_f1.set_ylabel("F1 Score (%)", fontsize=80)
     ax_f1.set_ylim(0, 100)
     ax_f1.tick_params(axis='y', labelsize=78)
@@ -79,7 +79,7 @@ def main():
     )
     ax_acc.set_title("Accuracy (%)", fontsize=84)
     ax_acc.set_xticks(list(x))
-    ax_acc.set_xticklabels(datasets, fontsize=80, rotation=90, ha='center')
+    ax_acc.set_xticklabels(datasets, fontsize=80, rotation=0, ha='center')
     ax_acc.set_ylim(0, 100)
     ax_acc.tick_params(axis='y', labelsize=78)
     # Remove decimal points from y-axis
