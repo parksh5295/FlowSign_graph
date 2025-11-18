@@ -138,9 +138,11 @@ def main():
         
         # Add break symbol (across the entire x-axis range - one long wavy line)
         # 전체 x축에 걸쳐 하나의 긴 물결을 그림
-        # [길이 조정] x_min, x_max 값을 조정하여 물결 길이 변경 (더 길게: 범위 확대)
-        x_min = -0.5
-        x_max = len(metrics) - 0.5
+        # [물결 좌우 길이 조정] x_min, x_max 값을 조정하여 물결 길이 변경
+        # 더 길게: x_min을 더 작게 (예: -0.8), x_max를 더 크게 (예: len(metrics) - 0.2)
+        # 더 짧게: x_min을 더 크게 (예: -0.3), x_max를 더 작게 (예: len(metrics) - 0.7)
+        x_min = -1
+        x_max = len(metrics) - 0.0
         x_center = (x_min + x_max) / 2
         width = x_max - x_min + 0.5  # 전체 x축 범위 + 여유
         
@@ -175,9 +177,9 @@ def main():
         
         # Add small vertical lines at ends
         ax.plot([x_data[0], x_data[0]], [y_data1[0], y_data2[0]], 
-                'k-', linewidth=25, clip_on=False, zorder=15)  # linewidth=3 -> 5로 증가
+                'k-', linewidth=5, clip_on=False, zorder=15)  # linewidth=3 -> 5로 증가
         ax.plot([x_data[-1], x_data[-1]], [y_data1[-1], y_data2[-1]], 
-                'k-', linewidth=25, clip_on=False, zorder=15)  # linewidth=3 -> 5로 증가
+                'k-', linewidth=5, clip_on=False, zorder=15)  # linewidth=3 -> 5로 증가
         
         ax.spines['top'].set_visible(True)
         
@@ -197,7 +199,9 @@ def main():
         # x축 레이블을 그래프 위에 표시 (ylim 설정 후)
         y_max = ax.get_ylim()[1]
         for i, metric in enumerate(metrics):
-            ax.text(i, y_max * 1.05, f'{metric} (%)', 
+            # F1 -> F1-score로 변경
+            display_metric = 'F1-score' if metric == 'F1' else metric
+            ax.text(i, y_max * 1.05, f'{display_metric} (%)', 
                    ha='center', va='bottom', fontsize=79, transform=ax.transData)
         # 기존 x축 레이블 숨기기
         ax.set_xticklabels([''] * len(metrics))
@@ -244,7 +248,9 @@ def main():
         # x축 레이블을 그래프 위에 표시 (ylim 설정 후)
         y_max = ax.get_ylim()[1]
         for i, metric in enumerate(metrics):
-            ax.text(i, y_max * 1.05, f'{metric} (%)', 
+            # F1 -> F1-score로 변경
+            display_metric = 'F1-score' if metric == 'F1' else metric
+            ax.text(i, y_max * 1.05, f'{display_metric} (%)', 
                    ha='center', va='bottom', fontsize=79, transform=ax.transData)
         # 기존 x축 레이블 숨기기
         ax.set_xticklabels([''] * len(metrics))
@@ -255,7 +261,9 @@ def main():
         # x축 레이블을 그래프 위에 표시 (ylim 설정 후)
         y_max = ax.get_ylim()[1]
         for i, metric in enumerate(metrics):
-            ax.text(i, y_max * 1.05, f'{metric} (%)', 
+            # F1 -> F1-score로 변경
+            display_metric = 'F1-score' if metric == 'F1' else metric
+            ax.text(i, y_max * 1.05, f'{display_metric} (%)', 
                    ha='center', va='bottom', fontsize=79, transform=ax.transData)
         # 기존 x축 레이블 숨기기
         ax.set_xticklabels([''] * len(metrics))

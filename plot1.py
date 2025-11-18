@@ -50,7 +50,7 @@ def main():
         label="Snort + FlowSign",
         color="#229954",  # Dark Green for Snort + FlowSign
     )
-    ax_f1.set_title("F1 Score (%)", fontsize=83)
+    ax_f1.set_title("F1-score (%)", fontsize=83)
     ax_f1.set_xticks(list(x))
     ax_f1.set_xticklabels(datasets, fontsize=71, rotation=0, ha='center')
     ax_f1.tick_params(axis='x', pad=1)  # x축 레이블을 아래로 내림
