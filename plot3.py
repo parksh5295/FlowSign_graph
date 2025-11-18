@@ -21,6 +21,11 @@ def main():
     # Load result3.csv
     df = pd.read_csv(results_dir / "result3.csv")
     
+    # Get actual column names (handle any potential column name issues)
+    actual_columns = df.columns.tolist()
+    # Remove 'Metric' column to get method names
+    method_columns = [col for col in actual_columns if col != 'Metric']
+    
     # Match plot1.py's figure size and font size ratios
     fig_width = 36  # Same as plot1.py
     fig, ax = plt.subplots(1, 1, figsize=(fig_width, 18))  # Reduced height
@@ -28,11 +33,13 @@ def main():
     ax.set_facecolor('white')
     
     # Color scheme - unified dark colors (same as plot1.py and plot4.py)
-    colors = {
+    # Map method names to colors
+    color_map = {
         'Snort': '#C0392B',  # Dark Red
         'Snort_Proposed': '#229954',  # Dark Green
-        'BAE-UQ-IDS': '#2980B9'  # Dark Blue
     }
+    # Default color for other methods
+    default_color = '#2980B9'  # Dark Blue
     
     # Filter Mean metrics (exclude Max metrics)
     mean_metrics = df[df['Metric'].str.contains('Mean', na=False) | df['Metric'].str.contains('Duration', na=False)]
@@ -40,29 +47,31 @@ def main():
     x = list(range(len(metrics)))
     bar_width = 0.25
     
-    # Plot bars for each method (Mean values)
-    methods = ['Snort', 'Snort_Proposed', 'BAE-UQ-IDS']
-    positions = [
-        [i - bar_width for i in x],  # Snort (left)
-        x,  # Snort_Proposed (center)
-        [i + bar_width for i in x]   # BAE-UQ-IDS (right)
-    ]
+    # Use actual method column names
+    methods = method_columns
+    # Generate positions dynamically based on number of methods
+    num_methods = len(methods)
+    positions = []
+    for i in range(num_methods):
+        offset = (i - (num_methods - 1) / 2) * bar_width
+        positions.append([x_val + offset for x_val in x])
     
     # Method display names
     method_display_names = {
         'Snort': 'Snort',
         'Snort_Proposed': 'Snort + FlowSign',
-        'BAE-UQ-IDS': 'BAE-UQ-IDS'
     }
     
     # Plot Mean values as bars
     for i, method in enumerate(methods):
+        display_name = method_display_names.get(method, method.replace('_', ' ').replace('-', ' '))
+        color = color_map.get(method, default_color)
         ax.bar(
             positions[i],
             mean_metrics[method].values,
             width=bar_width,
-            label=method_display_names.get(method, method.replace('_', ' ')),
-            color=colors[method]
+            label=display_name,
+            color=color
         )
     
     # Plot Max values as red lines/markers
