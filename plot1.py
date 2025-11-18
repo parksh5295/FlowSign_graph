@@ -30,7 +30,7 @@ def main():
     # A4 half-width size (A4 width = 8.27 inches, half = ~4 inches)
     # Increase figure size to accommodate larger text (similar to paper body text)
     fig_width = 36 if len(datasets) > 2 else 33  # Wider for larger text
-    fig, axes = plt.subplots(1, 2, figsize=(fig_width, 13.5))  # Height reduced to 75%
+    fig, axes = plt.subplots(1, 2, figsize=(fig_width, 10.8))  # Height reduced to 80% (13.5 * 0.8)
     fig.patch.set_facecolor('white')
 
     # ----- F1 Score subplot -----
@@ -55,11 +55,21 @@ def main():
     ax_f1.set_xticklabels(datasets, fontsize=72, rotation=0, ha='center')
     ax_f1.tick_params(axis='x', pad=1)  # x축 레이블을 아래로 내림
     # y축 제목 제거
-    ax_f1.set_ylim(0, 100)
-    ax_f1.tick_params(axis='y', labelsize=78)
-    # Remove decimal points from y-axis
-    ax_f1.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{int(x)}'))
+    # y축을 100 넘어가게 설정하되 y축 값은 표기하지 않음
+    ax_f1.set_ylim(0, 110)  # 100 넘어가게 설정
+    ax_f1.tick_params(axis='y', labelsize=78, labelleft=False)  # y축 레이블 숨김
     ax_f1.grid(True, alpha=0.3, linestyle='--')
+    
+    # 그래프 바 위에 값 표기
+    for i in range(len(datasets)):
+        # Snort 값
+        snort_val = df["F1_snort"].iloc[i]
+        ax_f1.text(i - bar_width / 2, snort_val + 2, f'{snort_val:.1f}',
+                   ha='center', va='bottom', fontsize=56, color="#C0392B", weight='bold')
+        # Snort + FlowSign 값
+        flowsign_val = df["F1_snort_FlowSign"].iloc[i]
+        ax_f1.text(i + bar_width / 2, flowsign_val + 2, f'{flowsign_val:.1f}',
+                   ha='center', va='bottom', fontsize=56, color="#229954", weight='bold')
 
     # ----- Accuracy subplot -----
     ax_acc = axes[1]
@@ -82,11 +92,21 @@ def main():
     ax_acc.set_xticks(list(x))
     ax_acc.set_xticklabels(datasets, fontsize=72, rotation=0, ha='center')
     ax_acc.tick_params(axis='x', pad=1)  # x축 레이블을 아래로 내림
-    ax_acc.set_ylim(0, 100)
-    ax_acc.tick_params(axis='y', labelsize=78)
-    # Remove decimal points from y-axis
-    ax_acc.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{int(x)}'))
+    # y축을 100 넘어가게 설정하되 y축 값은 표기하지 않음
+    ax_acc.set_ylim(0, 110)  # 100 넘어가게 설정
+    ax_acc.tick_params(axis='y', labelsize=78, labelleft=False)  # y축 레이블 숨김
     ax_acc.grid(True, alpha=0.3, linestyle='--')
+    
+    # 그래프 바 위에 값 표기
+    for i in range(len(datasets)):
+        # Snort 값
+        snort_val = df["Accuracy_snort"].iloc[i]
+        ax_acc.text(i - bar_width / 2, snort_val + 2, f'{snort_val:.1f}',
+                   ha='center', va='bottom', fontsize=56, color="#C0392B", weight='bold')
+        # Snort + FlowSign 값
+        flowsign_val = df["Accuracy_snort_FlowSign"].iloc[i]
+        ax_acc.text(i + bar_width / 2, flowsign_val + 2, f'{flowsign_val:.1f}',
+                   ha='center', va='bottom', fontsize=56, color="#229954", weight='bold')
 
     # Add a single legend at the top center, above the graph area
     # Get handles and labels from one of the subplots
@@ -99,11 +119,10 @@ def main():
                bbox_to_anchor=(0.5, 1.05),  # 0.05 올림
                bbox_transform=fig.transFigure)
     
-    # 높이가 75%로 줄어들었으므로 위쪽 여백 절대 크기 유지를 위해 top 값 조정
-    # 원래: 높이 18, top=0.90 → 위쪽 여백 1.8
-    # 현재: 높이 13.5, 같은 여백 유지 → top = 1 - (1.8/13.5) = 0.867
-    # 여백을 0.05 줄임: 0.867 → 0.817
-    fig.tight_layout(rect=[0, 0.01, 1, 0.868])
+    # 높이가 80%로 줄어들었으므로 위쪽 여백 절대 크기 유지를 위해 top 값 조정
+    # 원래: 높이 13.5, top=0.868 → 위쪽 여백 약 1.78
+    # 현재: 높이 10.8, 같은 여백 유지 → top = 1 - (1.78/10.8) = 0.835
+    fig.tight_layout(rect=[0, 0.01, 1, 0.835])
 
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
