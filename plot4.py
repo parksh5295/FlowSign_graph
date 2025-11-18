@@ -19,10 +19,11 @@ def add_break_symbol(ax, y_break_pos, x_center=0.5, width=1.5):
     # Common wave pattern (same amplitude for parallel lines)
     wave_pattern = 0.01 * y_range * np.sin(15 * np.pi * (x_data - (x_center - width/2)) / width)
     
-    # First wavy line (outer) - parallel to second line
-    y_data1 = y_break_pos + 0.01 * y_range + wave_pattern
+    # First wavy line (outer, upper) - parallel to second line
+    # Create clear gap between two lines
+    y_data1 = y_break_pos + 0.015 * y_range + wave_pattern
     
-    # Second wavy line (inner) - parallel to first line
+    # Second wavy line (inner, lower) - parallel to first line
     y_data2 = y_break_pos + 0.005 * y_range + wave_pattern
     
     # Create polygon path for white fill between the two wavy lines
