@@ -160,10 +160,11 @@ def main():
         wave_pattern = 0.01 * y_range * np.sin(15 * np.pi * (x_data - x_min) / (x_max - x_min))
         
         # First wavy line (outer, upper) - parallel to second line
-        y_data1 = break_position + 0.025 * y_range + wave_pattern
+        # [물결 선 간격 조정] 0.025와 0.0025 값을 조정하여 간격 변경 (더 넓게: 차이를 크게)
+        y_data1 = break_position + 0.05 * y_range + wave_pattern  # 0.025 -> 0.04로 증가
         
         # Second wavy line (inner, lower) - parallel to first line
-        y_data2 = break_position + 0.0025 * y_range + wave_pattern
+        y_data2 = break_position - 0.005 * y_range + wave_pattern  # 0.0025 -> -0.01로 감소 (간격 확대)
         
         # Create polygon path for white fill between the two wavy lines
         polygon_points = np.vstack([
@@ -182,9 +183,9 @@ def main():
         
         # Add small vertical lines at ends
         ax.plot([x_data[0], x_data[0]], [y_data1[0], y_data2[0]], 
-                'k-', linewidth=20, clip_on=False, zorder=15)  # linewidth=5 -> 10으로 증가
+                'k-', linewidth=7, clip_on=False, zorder=15)  # linewidth=5 -> 10으로 증가
         ax.plot([x_data[-1], x_data[-1]], [y_data1[-1], y_data2[-1]], 
-                'k-', linewidth=20, clip_on=False, zorder=15)  # linewidth=5 -> 10으로 증가
+                'k-', linewidth=7, clip_on=False, zorder=15)  # linewidth=5 -> 10으로 증가
         
         ax.spines['top'].set_visible(True)
         
