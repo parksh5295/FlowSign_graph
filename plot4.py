@@ -444,7 +444,7 @@ def main():
     metrics_info = [
         ('Avg_Processing_Time', 'Avg Processing Time (ms)', 0),
         ('p95_Latency', 'p95 Latency (ms)', 1),
-        ('Throughput', 'Throughput (ops/s)', 2)
+        ('Throughput', 'Throughput (kpps)', 2)
     ]
     
     for metric_name, ylabel, idx in metrics_info:
@@ -454,7 +454,7 @@ def main():
         # Plot metric with potential broken axis
         plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_names)
         
-        ax.set_title(ylabel, fontsize=86)  # Use ylabel (which includes units) as title
+        ax.set_title(ylabel, fontsize=82)  # Use ylabel (which includes units) as title
         ax.tick_params(axis='y', labelsize=72)
         ax.grid(True, alpha=0.3, linestyle='--')
     
