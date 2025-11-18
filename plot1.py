@@ -67,11 +67,11 @@ def main():
     for i in range(len(datasets)):
         # Snort 값
         snort_val = df["F1_snort"].iloc[i]
-        ax_f1.text(i - bar_width / 2, snort_val + 0.5, f'{snort_val:.1f}',
+        ax_f1.text(i - bar_width / 2, snort_val + 0.2, f'{snort_val:.1f}',
                    ha='center', va='bottom', fontsize=44, color="#C0392B", weight='bold')
         # Snort + FlowSign 값
         flowsign_val = df["F1_snort_FlowSign"].iloc[i]
-        ax_f1.text(i + bar_width / 2, flowsign_val + 0.5, f'{flowsign_val:.1f}',
+        ax_f1.text(i + bar_width / 2, flowsign_val + 0.2, f'{flowsign_val:.1f}',
                    ha='center', va='bottom', fontsize=44, color="#229954", weight='bold')
 
     # ----- Accuracy subplot -----
@@ -107,11 +107,11 @@ def main():
     for i in range(len(datasets)):
         # Snort 값
         snort_val = df["Accuracy_snort"].iloc[i]
-        ax_acc.text(i - bar_width / 2, snort_val + 0.5, f'{snort_val:.1f}',
+        ax_acc.text(i - bar_width / 2, snort_val + 0.2, f'{snort_val:.1f}',
                    ha='center', va='bottom', fontsize=44, color="#C0392B", weight='bold')
         # Snort + FlowSign 값
         flowsign_val = df["Accuracy_snort_FlowSign"].iloc[i]
-        ax_acc.text(i + bar_width / 2, flowsign_val + 0.5, f'{flowsign_val:.1f}',
+        ax_acc.text(i + bar_width / 2, flowsign_val + 0.2, f'{flowsign_val:.1f}',
                    ha='center', va='bottom', fontsize=44, color="#229954", weight='bold')
 
     # Add a single legend at the top center, above the graph area
