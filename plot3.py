@@ -126,6 +126,9 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
                 ax.bar(pos, y_pos, width=bar_width, 
                       label=display_name if metric_mean_name == 'Duration(s)' else '', 
                       color=color)
+                # 막대 위에 값 표시
+                ax.text(pos, y_pos + 0.5, f'{val:.1f}',
+                       ha='center', va='bottom', fontsize=44, color=color, weight='bold')
             
             # Plot high value
             if high_values:
@@ -136,6 +139,9 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
                 ax.bar(pos, scaled_val, width=bar_width, 
                       label=display_name if metric_mean_name == 'Duration(s)' else '', 
                       color=color)
+                # 막대 위에 값 표시
+                ax.text(pos, scaled_val + 0.5, f'{val:.1f}',
+                       ha='center', va='bottom', fontsize=44, color=color, weight='bold')
             
             # Add break symbol
             add_break_symbol(ax, break_position, x_center=0.5, width=1.4)
@@ -158,6 +164,9 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
                 ax.bar(positions[i], mean_values[i], width=bar_width,
                       label=display_name if metric_mean_name == 'Duration(s)' else '', 
                       color=color)
+                # 막대 위에 값 표시
+                ax.text(positions[i], mean_values[i] + max(mean_values) * 0.02, f'{mean_values[i]:.1f}',
+                       ha='center', va='bottom', fontsize=44, color=color, weight='bold')
             ax.set_ylim(0, max(mean_values) * 1.15)
             ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{int(x)}'))
     
@@ -191,6 +200,9 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
                 ax.bar(positions[i], y_pos, width=bar_width,
                       label=display_name if metric_mean_name == 'CPU_Mean(%)' else '', 
                       color=color)
+                # 막대 위에 값 표시
+                ax.text(positions[i], y_pos + 0.5, f'{mean_values[i]:.1f}',
+                       ha='center', va='bottom', fontsize=44, color=color, weight='bold')
             
             # Plot BAE max in high range
             scaled_max = 27 + (bae_max_val - high_tick_values[0]) / (high_tick_values[-1] - high_tick_values[0]) * 6
@@ -237,6 +249,10 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
                 ax.bar(positions[i], mean_values[i], width=bar_width,
                       label=display_name if metric_mean_name == 'CPU_Mean(%)' else '', 
                       color=color)
+                # 막대 위에 값 표시
+                max_y = max(max(mean_values), max([v for v in max_values if v is not None] or [0]))
+                ax.text(positions[i], mean_values[i] + max_y * 0.02, f'{mean_values[i]:.1f}',
+                       ha='center', va='bottom', fontsize=44, color=color, weight='bold')
                 if max_values[i] is not None:
                     x_start = positions[i] - bar_width / 2
                     x_end = positions[i] + bar_width / 2
@@ -301,6 +317,9 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
                 ax.bar(pos, y_pos, width=bar_width,
                       label=display_name if metric_mean_name == 'Memory_Mean(MB)' else '', 
                       color=color)
+                # 막대 위에 값 표시
+                ax.text(pos, y_pos + 0.5, f'{val:.1f}',
+                       ha='center', va='bottom', fontsize=44, color=color, weight='bold')
             
             # Plot low max values
             for idx, val, pos in low_max_values:
@@ -316,6 +335,9 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
             ax.bar(bae_mean_pos, scaled_bae_mean, width=bar_width,
                   label=display_name if metric_mean_name == 'Memory_Mean(MB)' else '', 
                   color=color)
+            # 막대 위에 값 표시
+            ax.text(bae_mean_pos, scaled_bae_mean + 0.5, f'{bae_mean_val:.1f}',
+                   ha='center', va='bottom', fontsize=44, color=color, weight='bold')
             
             # Plot BAE max in super high range
             if bae_max_val:
@@ -366,6 +388,10 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
                 ax.bar(positions[i], mean_values[i], width=bar_width,
                       label=display_name if metric_mean_name == 'Memory_Mean(MB)' else '', 
                       color=color)
+                # 막대 위에 값 표시
+                max_y = max(max(mean_values), max([v for v in max_values if v is not None] or [0]))
+                ax.text(positions[i], mean_values[i] + max_y * 0.02, f'{mean_values[i]:.1f}',
+                       ha='center', va='bottom', fontsize=44, color=color, weight='bold')
                 if max_values[i] is not None:
                     x_start = positions[i] - bar_width / 2
                     x_end = positions[i] + bar_width / 2
@@ -382,6 +408,10 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
             ax.bar(positions[i], mean_values[i], width=bar_width,
                   label=display_name if metric_mean_name == 'Duration(s)' else '', 
                   color=color)
+            # 막대 위에 값 표시
+            max_y = max(max(mean_values), max([v for v in max_values if v is not None] or [0]))
+            ax.text(positions[i], mean_values[i] + max_y * 0.02, f'{mean_values[i]:.1f}',
+                   ha='center', va='bottom', fontsize=44, color=color, weight='bold')
             if max_values[i] is not None:
                 x_start = positions[i] - bar_width / 2
                 x_end = positions[i] + bar_width / 2
