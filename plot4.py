@@ -383,15 +383,15 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
                        ha='center', va='bottom', fontsize=70, color=colors[method], weight='bold')
         else:
             # No clear separation, plot normally
-        for i, method in enumerate(methods):
-            val = df[df['Metric'] == metric_name][method].values[0]
-            ax.bar(
-                positions[i],
-                val,
-                width=bar_width,
-                    label=method_display_names.get(method, method.replace('_', ' ')) if metric_name == 'Avg_Processing_Time' else '',
-                color=colors[method]
-            )
+            for i, method in enumerate(methods):
+                val = df[df['Metric'] == metric_name][method].values[0]
+                ax.bar(
+                    positions[i],
+                    val,
+                    width=bar_width,
+                        label=method_display_names.get(method, method.replace('_', ' ')) if metric_name == 'Avg_Processing_Time' else '',
+                    color=colors[method]
+                )
                 ax.text(positions[i], val + max_val * 0.05, f'{val:.1f}',
                        ha='center', va='bottom', fontsize=70, color=colors[method], weight='bold')
             ax.set_ylim(0, max_val * 1.15 if max_val > 0 else 1)
