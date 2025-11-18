@@ -518,7 +518,7 @@ def main():
                             ncol=1,
                             frameon=True,
                             fontsize=76,
-                            bbox_to_anchor=(0.5, 0.91),
+                            bbox_to_anchor=(0.5, 0.925),
                             bbox_transform=fig.transFigure)
     else:
         fig.legend(all_handles, all_labels,
