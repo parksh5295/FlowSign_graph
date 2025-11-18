@@ -161,10 +161,10 @@ def main():
         
         # First wavy line (outer, upper) - parallel to second line
         # [물결 선 간격 조정] 0.025와 0.0025 값을 조정하여 간격 변경 (더 넓게: 차이를 크게)
-        y_data1 = break_position + 0.05 * y_range + wave_pattern  # 0.025 -> 0.04로 증가
+        y_data1 = break_position + 0.045 * y_range + wave_pattern  # 0.025 -> 0.04로 증가
         
         # Second wavy line (inner, lower) - parallel to first line
-        y_data2 = break_position - 0.005 * y_range + wave_pattern  # 0.0025 -> -0.01로 감소 (간격 확대)
+        y_data2 = break_position - 0.0025 * y_range + wave_pattern  # 0.0025 -> -0.01로 감소 (간격 확대)
         
         # Create polygon path for white fill between the two wavy lines
         polygon_points = np.vstack([
