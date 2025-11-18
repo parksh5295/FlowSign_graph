@@ -8,17 +8,33 @@ import pandas as pd
 
 
 def add_break_symbol(ax, y_break_pos, x_center=0.5, width=1.5):
-    """Add a double wavy break symbol (~~~~) to indicate axis break at y position."""
+    """Add a double wavy break symbol (~~~~) with white fill inside to indicate axis break."""
+    from matplotlib.patches import Polygon
+    from matplotlib.path import Path
+    
     # Create two wavy lines (double line)
-    x_data = np.linspace(x_center - width/2, x_center + width/2, 100)
+    x_data = np.linspace(x_center - width/2, x_center + width/2, 200)
     y_range = ax.get_ylim()[1] - ax.get_ylim()[0]
     
-    # First wavy line
-    y_data1 = y_break_pos + 0.01 * y_range * np.sin(15 * np.pi * (x_data - (x_center - width/2)) / width)
-    ax.plot(x_data, y_data1, 'k-', linewidth=3, clip_on=False, zorder=15)
+    # First wavy line (outer)
+    y_data1 = y_break_pos + 0.015 * y_range * np.sin(15 * np.pi * (x_data - (x_center - width/2)) / width)
     
-    # Second wavy line (slightly offset)
-    y_data2 = y_break_pos + 0.015 * y_range * np.sin(15 * np.pi * (x_data - (x_center - width/2)) / width)
+    # Second wavy line (inner, slightly offset)
+    y_data2 = y_break_pos + 0.005 * y_range * np.sin(15 * np.pi * (x_data - (x_center - width/2)) / width)
+    
+    # Create polygon path for white fill between the two wavy lines
+    # Combine outer line (forward) and inner line (backward) to form closed path
+    polygon_points = np.vstack([
+        np.column_stack([x_data, y_data1]),  # Outer line forward
+        np.column_stack([x_data[::-1], y_data2[::-1]])  # Inner line backward
+    ])
+    
+    # Fill the area between the two wavy lines with white
+    poly = Polygon(polygon_points, facecolor='white', edgecolor='none', zorder=13, transform=ax.transData)
+    ax.add_patch(poly)
+    
+    # Draw the two wavy lines
+    ax.plot(x_data, y_data1, 'k-', linewidth=3, clip_on=False, zorder=15)
     ax.plot(x_data, y_data2, 'k-', linewidth=3, clip_on=False, zorder=15)
     
     # Add small vertical lines at ends
@@ -34,8 +50,8 @@ def add_break_symbol(ax, y_break_pos, x_center=0.5, width=1.5):
     # Draw white rectangle to cover top spine in the break area
     from matplotlib.patches import Rectangle
     rect = Rectangle((x_center - width/2, y_break_pos - 0.01 * y_range), 
-                     width, 0.02 * y_range,
-                     facecolor='white', edgecolor='none', zorder=14, transform=ax.transData)
+                     width, 0.025 * y_range,
+                     facecolor='white', edgecolor='none', zorder=12, transform=ax.transData)
     ax.add_patch(rect)
 
 
@@ -119,8 +135,8 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width):
                 color=colors[method],
                 alpha=0.7
             )
-            # Add text annotation with actual value
-            ax.text(pos, 19.5, f'{val:.1f}',
+            # Add text annotation with actual value (lower position to avoid boundary)
+            ax.text(pos, 18.5, f'{val:.1f}',
                    ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
         
         # Add custom y-axis label for upper range
