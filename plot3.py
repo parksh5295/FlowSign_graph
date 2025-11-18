@@ -31,36 +31,74 @@ def main():
     colors = {
         'Snort': '#C0392B',  # Dark Red
         'Snort_Proposed': '#229954',  # Dark Green
-        'SoTA_ML': '#2980B9'  # Dark Blue
+        'BAE-UQ-IDS': '#2980B9'  # Dark Blue
     }
     
-    metrics = df['Metric'].values
+    # Filter Mean metrics (exclude Max metrics)
+    mean_metrics = df[df['Metric'].str.contains('Mean', na=False) | df['Metric'].str.contains('Duration', na=False)]
+    metrics = mean_metrics['Metric'].values
     x = list(range(len(metrics)))
     bar_width = 0.25
     
-    # Plot bars for each method
-    methods = ['Snort', 'Snort_Proposed', 'SoTA_ML']
+    # Plot bars for each method (Mean values)
+    methods = ['Snort', 'Snort_Proposed', 'BAE-UQ-IDS']
     positions = [
         [i - bar_width for i in x],  # Snort (left)
         x,  # Snort_Proposed (center)
-        [i + bar_width for i in x]   # SoTA_ML (right)
+        [i + bar_width for i in x]   # BAE-UQ-IDS (right)
     ]
     
-    # Method display names (match plot1.py and plot4.py)
+    # Method display names
     method_display_names = {
         'Snort': 'Snort',
         'Snort_Proposed': 'Snort + FlowSign',
-        'SoTA_ML': 'SoTA ML'
+        'BAE-UQ-IDS': 'BAE-UQ-IDS'
     }
     
+    # Plot Mean values as bars
     for i, method in enumerate(methods):
         ax.bar(
             positions[i],
-            df[method],
+            mean_metrics[method].values,
             width=bar_width,
             label=method_display_names.get(method, method.replace('_', ' ')),
             color=colors[method]
         )
+    
+    # Plot Max values as red lines/markers
+    max_metrics = df[df['Metric'].str.contains('Max', na=False)]
+    if len(max_metrics) > 0:
+        # For each method, plot Max values at corresponding Mean positions
+        for method_idx, method in enumerate(methods):
+            max_x_vals = []
+            max_y_vals = []
+            
+            for max_metric in max_metrics['Metric'].values:
+                # Find corresponding Mean metric position
+                if 'CPU_Max' in max_metric:
+                    # Find CPU_Mean position
+                    for idx, metric in enumerate(mean_metrics['Metric'].values):
+                        if 'CPU_Mean' in metric:
+                            max_x_vals.append(idx)
+                            max_val = df[df['Metric'] == max_metric][method].values[0]
+                            max_y_vals.append(max_val)
+                            break
+                
+                elif 'Memory_Max' in max_metric:
+                    # Find Memory_Mean position
+                    for idx, metric in enumerate(mean_metrics['Metric'].values):
+                        if 'Memory_Mean' in metric:
+                            max_x_vals.append(idx)
+                            max_val = df[df['Metric'] == max_metric][method].values[0]
+                            max_y_vals.append(max_val)
+                            break
+            
+            # Plot Max values as red line with markers
+            if len(max_x_vals) > 0:
+                # Adjust x positions to match method's bar position
+                adjusted_x_vals = [positions[method_idx][x] for x in max_x_vals]
+                ax.plot(adjusted_x_vals, max_y_vals, 'r-', linewidth=2, marker='o', markersize=8, 
+                       label='Max' if method_idx == 0 else '', zorder=10)
     
     # Match plot1.py's font sizes
     ax.set_title("Resource Metrics", fontsize=84)
