@@ -211,8 +211,12 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
             ax.spines['top'].set_visible(True)
             
             # Set ticks (remove last lower tick value)
-            lower_ticks_filtered = lower_ticks[:-1] if len(lower_ticks) > 1 else lower_ticks
-            lower_tick_positions_filtered = lower_tick_positions[:-1] if len(lower_tick_positions) > 1 else lower_tick_positions
+            if len(lower_ticks) > 1:
+                lower_ticks_filtered = lower_ticks[:-1]
+                lower_tick_positions_filtered = lower_tick_positions[:-1]
+            else:
+                lower_ticks_filtered = lower_ticks
+                lower_tick_positions_filtered = lower_tick_positions
             
             all_ticks = lower_tick_positions_filtered + high_tick_positions
             all_tick_labels = [f'{int(t)}' for t in lower_ticks_filtered] + [f'{int(t)}' for t in high_tick_values]
@@ -320,8 +324,12 @@ def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, meth
             ax.spines['top'].set_visible(True)
             
             # Set ticks (remove last lower tick value)
-            lower_ticks_filtered = lower_ticks[:-1] if len(lower_ticks) > 1 else lower_ticks
-            lower_tick_positions_filtered = lower_tick_positions[:-1] if len(lower_tick_positions) > 1 else lower_tick_positions
+            if len(lower_ticks) > 1:
+                lower_ticks_filtered = lower_ticks[:-1]
+                lower_tick_positions_filtered = lower_tick_positions[:-1]
+            else:
+                lower_ticks_filtered = lower_ticks
+                lower_tick_positions_filtered = lower_tick_positions
             
             if bae_max_val:
                 all_ticks = lower_tick_positions_filtered + high_tick_positions + super_high_tick_positions
