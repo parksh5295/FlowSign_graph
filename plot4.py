@@ -454,7 +454,7 @@ def main():
         # Plot metric with potential broken axis
         plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_names)
         
-        ax.set_title(ylabel, fontsize=82)  # Use ylabel (which includes units) as title
+        ax.set_title(ylabel, fontsize=78)  # Use ylabel (which includes units) as title
         ax.tick_params(axis='y', labelsize=72)
         ax.grid(True, alpha=0.3, linestyle='--')
     
