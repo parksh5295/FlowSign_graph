@@ -117,7 +117,8 @@ def main():
     df = pd.read_csv(results_dir / "result4.csv")
     
     # A4 half-width size, 3 subplots vertically
-    fig, axes = plt.subplots(3, 1, figsize=(8, 3.5))
+    # Increase figure size to accommodate 3x larger text
+    fig, axes = plt.subplots(3, 1, figsize=(24, 10.5))  # 3x width and height for 3x text
     fig.patch.set_facecolor('white')
     
     # Color scheme

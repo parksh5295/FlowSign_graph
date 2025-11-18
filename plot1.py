@@ -25,9 +25,9 @@ def main():
     bar_width = 0.3 if len(datasets) > 2 else 0.35
 
     # A4 half-width size (A4 width = 8.27 inches, half = ~4 inches)
-    # Increase figure size to better accommodate text and more datasets
-    fig_width = 9 if len(datasets) > 2 else 8  # 2x width
-    fig, axes = plt.subplots(1, 2, figsize=(fig_width, 4))  # Original height
+    # Increase figure size to accommodate 3x larger text
+    fig_width = 27 if len(datasets) > 2 else 24  # 3x width for 3x text
+    fig, axes = plt.subplots(1, 2, figsize=(fig_width, 12))  # 3x height for 3x text
     fig.patch.set_facecolor('white')
 
     # ----- F1 Score subplot -----

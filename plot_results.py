@@ -9,7 +9,8 @@ import pandas as pd
 def plot_single_result(df, title, output_path):
     """Plot a single result CSV file as a separate graph."""
     # A4 half-width size (A4 width = 8.27 inches, half = ~4 inches)
-    fig, ax = plt.subplots(1, 1, figsize=(8, 3.5))  # 2x width, original height
+    # Increase figure size to accommodate 3x larger text
+    fig, ax = plt.subplots(1, 1, figsize=(24, 10.5))  # 3x width and height for 3x text
     fig.patch.set_facecolor('white')
     ax.set_facecolor('white')
     
