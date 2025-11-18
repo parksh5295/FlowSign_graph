@@ -241,39 +241,43 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
             high_min = min(high_values) * 0.9  # Lower limit of upper range (with padding)
             high_max = max(high_values) * 1.1  # Upper limit of upper range
             
-            # Plot low values in lower range (same as Throughput)
-            for (method, orig_i), pos, val in zip(low_methods, low_positions, low_values):
-                ax.bar(
-                    pos,
-                    val,
-                    width=bar_width,
-                    label=method_display_names.get(method, method.replace('_', ' ')) if metric_name == 'Avg_Processing_Time' else '',
-                    color=colors[method]
-                )
-                # Add text annotation (same spacing as Throughput)
-                ax.text(pos, val + max(low_values) * 0.05, f'{val:.1f}',
-                       ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
-            
             # Find break position (same as Throughput)
             low_max_val = max(low_values)
+            # Make Snort/Snort+FlowSign bars larger by using a smaller range
+            # Scale low_max_val to fit in a larger portion of the lower range
+            # Use similar approach to Throughput: 0-15 range for low values
+            # But scale dynamically based on low_max_val
+            low_range_end = max(low_max_val * 1.2, 3.0)  # At least 3.0 to show bars clearly
             high_start = 27  # Where high values start (same as Throughput: 27)
-            break_position = (low_max_val + high_start) / 2
+            break_position = (low_range_end + high_start) / 2
             
-            # Set y-axis ticks for lower range (similar to Throughput)
-            # Create lower ticks based on low_max
-            lower_ticks = []
-            tick_step = low_max_val / 3  # Divide into 3-4 ticks
-            if tick_step < 0.1:
-                tick_step = 0.1
-            elif tick_step < 1:
-                tick_step = round(tick_step, 1)
+            # Set y-axis ticks for lower range (EXACT same as Throughput: fixed spacing)
+            # Use fixed step size like Throughput (5 units), but scale to data
+            # Find appropriate step size: round to nice numbers
+            if low_max_val <= 1.0:
+                tick_step = 0.2  # 0.2 unit steps
+            elif low_max_val <= 3.0:
+                tick_step = 0.5  # 0.5 unit steps
+            elif low_max_val <= 10.0:
+                tick_step = 1.0  # 1.0 unit steps
             else:
-                tick_step = round(tick_step)
+                tick_step = 2.0  # 2.0 unit steps
             
+            # Create lower ticks with fixed spacing (same visual approach as Throughput)
+            lower_ticks = []
+            lower_tick_positions = []
             current_tick = 0
-            while current_tick <= low_max_val:
+            current_pos = 0
+            pos_step = 5  # Same visual spacing as Throughput (5 units)
+            
+            while current_tick <= low_range_end:
                 lower_ticks.append(current_tick)
+                lower_tick_positions.append(current_pos)
                 current_tick += tick_step
+                current_pos += pos_step
+            
+            # Adjust low_range_end to match the last tick position
+            low_range_end = lower_tick_positions[-1] if lower_tick_positions else low_max_val * 1.2
             
             # High value ticks: create ticks for high range
             # Use similar spacing logic as Throughput
@@ -298,6 +302,28 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
             y_max = 27 + (num_ticks - 1) * 5 + 3 if num_ticks > 1 else 35
             ax.set_ylim(0, y_max)
             
+            # Scale low values to fit in the lower range positions
+            # Map low_max_val to low_range_end position
+            low_scale_factor = low_range_end / low_max_val if low_max_val > 0 else 1
+            
+            # Re-plot low values with scaling to make them larger
+            for (method, orig_i), pos, val in zip(low_methods, low_positions, low_values):
+                scaled_low_val = val * low_scale_factor
+                # Remove old bar by clearing and re-plotting
+                ax.bar(
+                    pos,
+                    scaled_low_val,
+                    width=bar_width,
+                    label=method_display_names.get(method, method.replace('_', ' ')) if metric_name == 'Avg_Processing_Time' else '',
+                    color=colors[method]
+                )
+                # Add text annotation
+                ax.text(pos, scaled_low_val + low_range_end * 0.05, f'{val:.1f}',
+                       ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
+            
+            # Update break position based on scaled low range
+            break_position = (low_range_end + high_start) / 2
+            
             # Add break symbol (same as Throughput)
             add_break_symbol(ax, break_position, x_center=0.5, width=1.0)
             
@@ -305,7 +331,7 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
             ax.spines['top'].set_visible(True)
             
             # Combine lower and upper ticks (same as Throughput)
-            all_ticks = lower_ticks + high_tick_positions
+            all_ticks = lower_tick_positions + high_tick_positions
             all_tick_labels = [f'{t:.2f}' if t < 1 else f'{t:.1f}' for t in lower_ticks] + [f'{t:.1f}' for t in high_tick_values]
             
             # Set ticks and labels (same as Throughput)
