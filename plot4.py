@@ -8,8 +8,9 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import pandas as pd
 
-# Set font to Times New Roman
-mpl.rcParams["font.family"] = "Times New Roman"
+# Set font to Times New Roman (use serif family with Times New Roman as first choice)
+mpl.rcParams["font.family"] = "serif"
+mpl.rcParams["font.serif"] = ["Times New Roman", "Times", "DejaVu Serif", "Liberation Serif"]
 
 
 def add_break_symbol(ax, y_break_pos, x_center=0.5, width=1.5):
