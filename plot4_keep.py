@@ -129,22 +129,7 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
         ax.spines['top'].set_visible(True)
         
         # Set y-axis ticks for lower range
-        # Add high value ticks above the break (370-400 range) on the left y-axis
-        # Lower range ticks: 0, 5, 10, 15 (with gap before break)
-        lower_ticks = [0, 5, 10, 15]
-        
-        # High value ticks: map 370-400 range to 27-32 positions on y-axis
-        # Use fewer ticks to show clear gap (370, 375, 380, 385, 390)
-        high_tick_values = np.linspace(high_min, int(high_max), 5)
-        high_tick_positions = [27 + (t - high_min) / (high_max - high_min) * 5 for t in high_tick_values]
-        
-        # Combine lower and upper ticks (gap between 15 and 27 shows the break)
-        all_ticks = lower_ticks + high_tick_positions
-        all_tick_labels = ['0', '5', '10', '15'] + [f'{int(t)}' for t in high_tick_values]
-        
-        # Set ticks and labels
-        ax.set_yticks(all_ticks)
-        ax.set_yticklabels(all_tick_labels, fontsize=24)
+        ax.set_yticks([0, 5, 10, 15])
         
         # Plot high values scaled to fit in upper part of visible area
         # Keep Snort and Snort + FlowSign at higher position to maintain bar length (27-32 range)
@@ -166,78 +151,22 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
     else:
         # Plot normally (for Avg_Processing_Time and p95_Latency)
         positions = [x_center - bar_width, x_center, x_center + bar_width]
+        for i, method in enumerate(methods):
+            val = df[df['Metric'] == metric_name][method].values[0]
+            ax.bar(
+                positions[i],
+                val,
+                width=bar_width,
+                label=method_display_names.get(method, method.replace('_', ' ')) if metric_name == 'Avg_Processing_Time' else '',
+                color=colors[method]
+            )
+            # Add text annotation above bars
+            ax.text(positions[i], val + max_val * 0.05, f'{val:.1f}',
+                   ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
         
-        # Separate low and high values for broken axis
-        low_values_list = [v for v in values if v < max_val * 0.1]
-        high_values_list = [v for v in values if v >= max_val * 0.1]
-        
-        low_max = max(low_values_list) if low_values_list else 0
-        high_min = min(high_values_list) if high_values_list else max_val
-        
-        # Check if we need broken axis (significant gap between low and high)
-        needs_break = (low_values_list and high_values_list and low_max < high_min * 0.5)
-        
-        if needs_break:
-            # Plot low values first
-            for i, method in enumerate(methods):
-                val = df[df['Metric'] == metric_name][method].values[0]
-                if val < max_val * 0.1:  # Low value
-                    ax.bar(
-                        positions[i],
-                        val,
-                        width=bar_width,
-                        label=method_display_names.get(method, method.replace('_', ' ')) if metric_name == 'Avg_Processing_Time' else '',
-                        color=colors[method]
-                    )
-                    # Add text annotation
-                    ax.text(positions[i], val + low_max * 0.05, f'{val:.1f}',
-                           ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
-            
-            # Set y-axis to show lower range
-            ax.set_ylim(0, low_max * 1.3)
-            
-            # Add break symbol
-            add_break_symbol(ax, low_max * 1.15, x_center=0.5, width=1.0)
-            
-            # Hide top spine
-            ax.spines['top'].set_visible(False)
-            
-            # Plot high values scaled to fit above break
-            for i, method in enumerate(methods):
-                val = df[df['Metric'] == metric_name][method].values[0]
-                if val >= max_val * 0.1:  # High value
-                    # Scale to fit in upper part
-                    scaled_val = low_max * 1.15 + (val - high_min) / (max_val - high_min) * (low_max * 0.15)
-                    ax.bar(
-                        positions[i],
-                        scaled_val,
-                        width=bar_width,
-                        color=colors[method],
-                        alpha=0.7
-                    )
-                    # Add text annotation
-                    ax.text(positions[i], scaled_val + low_max * 0.02, f'{val:.1f}',
-                           ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
-            
-            # Set y-axis ticks for lower range
-            ax.set_yticks([0, low_max * 0.25, low_max * 0.5, low_max * 0.75, low_max])
-        else:
-            # Plot all values normally
-            for i, method in enumerate(methods):
-                val = df[df['Metric'] == metric_name][method].values[0]
-                ax.bar(
-                    positions[i],
-                    val,
-                    width=bar_width,
-                    label=method_display_names.get(method, method.replace('_', ' ')) if metric_name == 'Avg_Processing_Time' else '',
-                    color=colors[method]
-                )
-                # Add text annotation above bars
-                ax.text(positions[i], val + max_val * 0.05, f'{val:.1f}',
-                       ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
-            
-            # Use smaller multiplier to reduce gap
-            ax.set_ylim(0, max_val * 1.08 if max_val > 0 else 1)
+        # Reduce gap by using smaller y-axis range (focus on the range where values are)
+        # Use a smaller multiplier to reduce the gap
+        ax.set_ylim(0, max_val * 1.15 if max_val > 0 else 1)
     
     ax.set_xlim(-0.2, 1.2)
     ax.set_xticks([])
