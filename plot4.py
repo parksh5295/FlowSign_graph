@@ -12,15 +12,18 @@ def add_break_symbol(ax, y_break_pos, x_center=0.5, width=1.5):
     from matplotlib.patches import Polygon
     from matplotlib.path import Path
     
-    # Create two wavy lines (double line)
+    # Create two wavy lines (double line, parallel)
     x_data = np.linspace(x_center - width/2, x_center + width/2, 200)
     y_range = ax.get_ylim()[1] - ax.get_ylim()[0]
     
-    # First wavy line (outer)
-    y_data1 = y_break_pos + 0.015 * y_range * np.sin(15 * np.pi * (x_data - (x_center - width/2)) / width)
+    # Common wave pattern (same amplitude for parallel lines)
+    wave_pattern = 0.01 * y_range * np.sin(15 * np.pi * (x_data - (x_center - width/2)) / width)
     
-    # Second wavy line (inner, slightly offset)
-    y_data2 = y_break_pos + 0.005 * y_range * np.sin(15 * np.pi * (x_data - (x_center - width/2)) / width)
+    # First wavy line (outer) - parallel to second line
+    y_data1 = y_break_pos + 0.01 * y_range + wave_pattern
+    
+    # Second wavy line (inner) - parallel to first line
+    y_data2 = y_break_pos + 0.005 * y_range + wave_pattern
     
     # Create polygon path for white fill between the two wavy lines
     # Combine outer line (forward) and inner line (backward) to form closed path
@@ -109,9 +112,9 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width):
         # Set y-axis to show lower range (0-20)
         ax.set_ylim(0, 20)
         
-        # Add break symbol at top of lower range (within graph bounds)
+        # Add break symbol at top of lower range (slightly lower position)
         # x-axis range is -0.2 to 1.2, so keep width within this range
-        add_break_symbol(ax, 17, x_center=0.5, width=1.0)
+        add_break_symbol(ax, 16, x_center=0.5, width=1.0)
         
         # Keep top spine visible but it will be covered by the break symbol
         ax.spines['top'].set_visible(True)
