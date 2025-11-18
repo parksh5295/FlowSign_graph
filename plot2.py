@@ -175,9 +175,9 @@ def main():
         
         # Add small vertical lines at ends
         ax.plot([x_data[0], x_data[0]], [y_data1[0], y_data2[0]], 
-                'k-', linewidth=15, clip_on=False, zorder=15)  # linewidth=3 -> 5로 증가
+                'k-', linewidth=20, clip_on=False, zorder=15)  # linewidth=3 -> 5로 증가
         ax.plot([x_data[-1], x_data[-1]], [y_data1[-1], y_data2[-1]], 
-                'k-', linewidth=15, clip_on=False, zorder=15)  # linewidth=3 -> 5로 증가
+                'k-', linewidth=20, clip_on=False, zorder=15)  # linewidth=3 -> 5로 증가
         
         ax.spines['top'].set_visible(True)
         
