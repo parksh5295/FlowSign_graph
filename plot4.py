@@ -113,9 +113,15 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
         # SoTA ML will appear lower relative to the fixed high values
         ax.set_ylim(0, 35)
         
-        # Add break symbol at top of lower range
+        # Find the middle point between SoTA ML (low values) and Snort/Snort+FlowSign (high values)
+        # SoTA ML max is around 15, high values start at 25, so middle is around 20
+        sota_ml_max = max(low_values) if low_values else 15
+        high_start = 25  # Where high values start
+        break_position = (sota_ml_max + high_start) / 2  # Middle position
+        
+        # Add break symbol at middle position between SoTA ML and high values
         # x-axis range is -0.2 to 1.2, so keep width within this range
-        add_break_symbol(ax, 16, x_center=0.5, width=1.0)
+        add_break_symbol(ax, break_position, x_center=0.5, width=1.0)
         
         # Keep top spine visible but it will be covered by the break symbol
         ax.spines['top'].set_visible(True)
@@ -124,11 +130,11 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
         ax.set_yticks([0, 5, 10, 15])
         
         # Plot high values scaled to fit in upper part of visible area
-        # Keep Snort and Snort + FlowSign at fixed position (17-20 range)
+        # Keep Snort and Snort + FlowSign at higher position to maintain bar length (25-30 range)
         for (method, orig_i), pos, val in zip(high_methods, high_positions, high_values):
-            # Scale high value to fit in upper range (17-20) - fixed position
-            # Map from [high_min, high_max] to [17, 20]
-            scaled_val = 17 + (val - high_min) / (high_max - high_min) * 3
+            # Scale high value to fit in upper range (25-30) - maintain bar length
+            # Map from [high_min, high_max] to [25, 30]
+            scaled_val = 25 + (val - high_min) / (high_max - high_min) * 5
             ax.bar(
                 pos,
                 scaled_val,
