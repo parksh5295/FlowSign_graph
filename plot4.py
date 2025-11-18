@@ -243,41 +243,45 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
             
             # Find break position (same as Throughput)
             low_max_val = max(low_values)
-            # Make Snort/Snort+FlowSign bars larger by using a smaller range
-            # Scale low_max_val to fit in a larger portion of the lower range
-            # Use similar approach to Throughput: 0-15 range for low values
-            # But scale dynamically based on low_max_val
-            low_range_end = max(low_max_val * 1.2, 3.0)  # At least 3.0 to show bars clearly
+            # Use similar approach to Throughput: fixed range for low values
+            # But make it larger to show bars more clearly, while keeping them below break
+            # Set a reasonable upper limit for low range (similar to Throughput's 15)
+            # Make it dynamic but ensure it doesn't exceed break position
             high_start = 27  # Where high values start (same as Throughput: 27)
-            break_position = (low_range_end + high_start) / 2
             
-            # Set y-axis ticks for lower range (EXACT same as Throughput: fixed spacing)
-            # Use fixed step size like Throughput (5 units), but scale to data
-            # Find appropriate step size: round to nice numbers
+            # Set low range end to be well below break (similar to Throughput's 15)
+            # Use a value that makes bars visible but doesn't exceed break
             if low_max_val <= 1.0:
-                tick_step = 0.2  # 0.2 unit steps
+                low_range_end_val = 1.5  # Value range end
+                tick_step = 0.5
             elif low_max_val <= 3.0:
-                tick_step = 0.5  # 0.5 unit steps
-            elif low_max_val <= 10.0:
-                tick_step = 1.0  # 1.0 unit steps
+                low_range_end_val = 4.0  # Value range end
+                tick_step = 1.0
+            elif low_max_val <= 5.0:
+                low_range_end_val = 6.0  # Value range end
+                tick_step = 1.5
             else:
-                tick_step = 2.0  # 2.0 unit steps
+                low_range_end_val = low_max_val * 1.2
+                tick_step = round(low_max_val / 3)
             
-            # Create lower ticks with fixed spacing (same visual approach as Throughput)
+            # Map low_range_end_val to y-axis position (similar to Throughput: 0-15 maps to 0-15)
+            # But we want to keep it below break, so use a smaller range
+            # Use position 0-20 for low values (similar to Throughput's 0-15)
+            low_range_end_pos = 20  # Maximum y-axis position for low values (below break at 27)
+            break_position = (low_range_end_pos + high_start) / 2  # Around 23.5
+            
+            # Create lower ticks with actual values (not scaled)
+            # Map actual values to y-axis positions proportionally
             lower_ticks = []
             lower_tick_positions = []
             current_tick = 0
-            current_pos = 0
-            pos_step = 5  # Same visual spacing as Throughput (5 units)
             
-            while current_tick <= low_range_end:
+            while current_tick <= low_range_end_val:
                 lower_ticks.append(current_tick)
-                lower_tick_positions.append(current_pos)
+                # Map value to y-axis position: 0 to low_range_end_val maps to 0 to low_range_end_pos
+                pos = (current_tick / low_range_end_val) * low_range_end_pos if low_range_end_val > 0 else 0
+                lower_tick_positions.append(pos)
                 current_tick += tick_step
-                current_pos += pos_step
-            
-            # Adjust low_range_end to match the last tick position
-            low_range_end = lower_tick_positions[-1] if lower_tick_positions else low_max_val * 1.2
             
             # High value ticks: create ticks for high range
             # Use similar spacing logic as Throughput
@@ -302,27 +306,21 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
             y_max = 27 + (num_ticks - 1) * 5 + 3 if num_ticks > 1 else 35
             ax.set_ylim(0, y_max)
             
-            # Scale low values to fit in the lower range positions
-            # Map low_max_val to low_range_end position
-            low_scale_factor = low_range_end / low_max_val if low_max_val > 0 else 1
-            
-            # Re-plot low values with scaling to make them larger
+            # Plot low values at actual positions (same as Throughput - no scaling)
+            # Map actual values to y-axis positions proportionally
             for (method, orig_i), pos, val in zip(low_methods, low_positions, low_values):
-                scaled_low_val = val * low_scale_factor
-                # Remove old bar by clearing and re-plotting
+                # Map actual value to y-axis position: 0 to low_range_end_val maps to 0 to low_range_end_pos
+                y_pos = (val / low_range_end_val) * low_range_end_pos if low_range_end_val > 0 else 0
                 ax.bar(
                     pos,
-                    scaled_low_val,
+                    y_pos,
                     width=bar_width,
                     label=method_display_names.get(method, method.replace('_', ' ')) if metric_name == 'Avg_Processing_Time' else '',
                     color=colors[method]
                 )
                 # Add text annotation
-                ax.text(pos, scaled_low_val + low_range_end * 0.05, f'{val:.1f}',
+                ax.text(pos, y_pos + low_range_end_pos * 0.05, f'{val:.1f}',
                        ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
-            
-            # Update break position based on scaled low range
-            break_position = (low_range_end + high_start) / 2
             
             # Add break symbol (same as Throughput)
             add_break_symbol(ax, break_position, x_center=0.5, width=1.0)
