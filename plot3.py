@@ -10,6 +10,60 @@ mpl.rcParams["font.family"] = "serif"
 mpl.rcParams["font.serif"] = ["Times New Roman", "Times", "DejaVu Serif", "Liberation Serif"]
 
 
+def plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, method_columns, 
+                        color_map, default_color, method_display_names, bar_width, title):
+    """Plot a single metric subplot with Mean bars and Max horizontal lines."""
+    # Get Mean values
+    mean_row = df[df['Metric'] == metric_mean_name]
+    if len(mean_row) == 0:
+        return
+    
+    # Position for grouped bars (single group of bars)
+    x_center = 0.5
+    num_methods = len(methods)
+    positions = []
+    for i in range(num_methods):
+        offset = (i - (num_methods - 1) / 2) * bar_width
+        positions.append(x_center + offset)
+    
+    # Plot Mean values as bars
+    for i, method in enumerate(methods):
+        method_col = method_columns[i]
+        mean_val = mean_row[method_col].values[0]
+        display_name = method_display_names.get(method, method.replace('_', ' ').replace('-', ' '))
+        color = color_map.get(method, default_color)
+        
+        ax.bar(
+            positions[i],
+            mean_val,
+            width=bar_width,
+            label=display_name if metric_mean_name == 'Duration(s)' else '',  # Only label in first subplot
+            color=color
+        )
+    
+    # Plot Max values as horizontal red lines (if Max metric exists)
+    if metric_max_name:
+        max_row = df[df['Metric'] == metric_max_name]
+        if len(max_row) > 0:
+            for i, method in enumerate(methods):
+                method_col = method_columns[i]
+                max_val = max_row[method_col].values[0]
+                # Draw horizontal line at max value, spanning the bar width
+                x_start = positions[i] - bar_width / 2
+                x_end = positions[i] + bar_width / 2
+                ax.plot([x_start, x_end], [max_val, max_val], 'r-', linewidth=2, 
+                       label='Max' if i == 0 and metric_mean_name == 'CPU_Mean(%)' else '', zorder=10)
+    
+    # Set title and formatting
+    ax.set_title(title, fontsize=78)
+    ax.set_xticks([])  # No x-axis labels for individual subplots
+    ax.tick_params(axis='y', labelsize=72)
+    # Remove decimal points from y-axis
+    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{int(x)}'))
+    ax.grid(True, alpha=0.3, linestyle='--')
+    ax.set_xlim(-0.2, 1.2)
+
+
 def main():
     # Base directory
     base_dir = Path(__file__).resolve().parent
@@ -26,14 +80,12 @@ def main():
     # Remove 'Metric' column to get method names
     method_columns = [col for col in actual_columns if col != 'Metric']
     
-    # Match plot1.py's figure size and font size ratios
-    fig_width = 36  # Same as plot1.py
-    fig, ax = plt.subplots(1, 1, figsize=(fig_width, 18))  # Reduced height
+    # Match plot4.py's figure size and layout
+    fig_width = 36  # Same as plot4.py
+    fig, axes = plt.subplots(1, 3, figsize=(fig_width, 18))  # 3 subplots horizontally
     fig.patch.set_facecolor('white')
-    ax.set_facecolor('white')
     
-    # Color scheme - unified dark colors (same as plot1.py and plot4.py)
-    # Map method names to colors
+    # Color scheme - unified dark colors
     color_map = {
         'Snort': '#C0392B',  # Dark Red
         'Snort_Proposed': '#229954',  # Dark Green
@@ -41,95 +93,81 @@ def main():
     # Default color for other methods
     default_color = '#2980B9'  # Dark Blue
     
-    # Filter Mean metrics (exclude Max metrics)
-    mean_metrics = df[df['Metric'].str.contains('Mean', na=False) | df['Metric'].str.contains('Duration', na=False)]
-    metrics = mean_metrics['Metric'].values
-    x = list(range(len(metrics)))
-    bar_width = 0.25
-    
-    # Use actual method column names
-    methods = method_columns
-    # Generate positions dynamically based on number of methods
-    num_methods = len(methods)
-    positions = []
-    for i in range(num_methods):
-        offset = (i - (num_methods - 1) / 2) * bar_width
-        positions.append([x_val + offset for x_val in x])
-    
     # Method display names
     method_display_names = {
         'Snort': 'Snort',
         'Snort_Proposed': 'Snort + FlowSign',
     }
     
-    # Plot Mean values as bars
-    for i, method in enumerate(methods):
+    # Map method_columns to method names (for display)
+    methods = []
+    for col in method_columns:
+        if col == 'Snort':
+            methods.append('Snort')
+        elif col == 'Snort_Proposed':
+            methods.append('Snort_Proposed')
+        else:
+            methods.append(col)  # Use column name as-is for others
+    
+    bar_width = 0.4  # Wider bars to fill the graph area
+    
+    # Metric names and titles
+    metrics_info = [
+        ('Duration(s)', None, 'Duration (s)', 0),  # No Max for Duration
+        ('CPU_Mean(%)', 'CPU_Max(%)', 'CPU (%)', 1),
+        ('Memory_Mean(MB)', 'Memory_Max(MB)', 'Memory (MB)', 2)
+    ]
+    
+    for metric_mean_name, metric_max_name, title, idx in metrics_info:
+        ax = axes[idx]
+        ax.set_facecolor('white')
+        
+        plot_metric_subplot(ax, df, metric_mean_name, metric_max_name, methods, method_columns,
+                           color_map, default_color, method_display_names, bar_width, title)
+    
+    # Add a single legend at the top center, above all subplots
+    # Collect handles and labels from all axes to ensure all methods are included
+    all_handles = []
+    all_labels = []
+    seen_labels = set()
+    
+    # First, collect all handles and labels from all axes
+    for ax in axes:
+        handles, labels = ax.get_legend_handles_labels()
+        for handle, label in zip(handles, labels):
+            if label and label not in seen_labels:
+                all_handles.append(handle)
+                all_labels.append(label)
+                seen_labels.add(label)
+    
+    # If some methods are missing, add them manually
+    for method in methods:
         display_name = method_display_names.get(method, method.replace('_', ' ').replace('-', ' '))
-        color = color_map.get(method, default_color)
-        ax.bar(
-            positions[i],
-            mean_metrics[method].values,
-            width=bar_width,
-            label=display_name,
-            color=color
-        )
+        if display_name not in seen_labels:
+            from matplotlib.patches import Rectangle
+            method_col = method_columns[methods.index(method)]
+            color = color_map.get(method, default_color)
+            dummy_handle = Rectangle((0, 0), 1, 1, facecolor=color, edgecolor='black')
+            all_handles.append(dummy_handle)
+            all_labels.append(display_name)
+            seen_labels.add(display_name)
     
-    # Plot Max values as red lines/markers
-    max_metrics = df[df['Metric'].str.contains('Max', na=False)]
-    if len(max_metrics) > 0:
-        # For each method, plot Max values at corresponding Mean positions
-        for method_idx, method in enumerate(methods):
-            max_x_vals = []
-            max_y_vals = []
-            
-            for max_metric in max_metrics['Metric'].values:
-                # Find corresponding Mean metric position
-                if 'CPU_Max' in max_metric:
-                    # Find CPU_Mean position
-                    for idx, metric in enumerate(mean_metrics['Metric'].values):
-                        if 'CPU_Mean' in metric:
-                            max_x_vals.append(idx)
-                            max_val = df[df['Metric'] == max_metric][method].values[0]
-                            max_y_vals.append(max_val)
-                            break
-                
-                elif 'Memory_Max' in max_metric:
-                    # Find Memory_Mean position
-                    for idx, metric in enumerate(mean_metrics['Metric'].values):
-                        if 'Memory_Mean' in metric:
-                            max_x_vals.append(idx)
-                            max_val = df[df['Metric'] == max_metric][method].values[0]
-                            max_y_vals.append(max_val)
-                            break
-            
-            # Plot Max values as red line with markers
-            if len(max_x_vals) > 0:
-                # Adjust x positions to match method's bar position
-                adjusted_x_vals = [positions[method_idx][x] for x in max_x_vals]
-                ax.plot(adjusted_x_vals, max_y_vals, 'r-', linewidth=2, marker='o', markersize=8, 
-                       label='Max' if method_idx == 0 else '', zorder=10)
+    # Add Max to legend if not already present
+    if 'Max' not in seen_labels:
+        from matplotlib.lines import Line2D
+        max_handle = Line2D([0], [0], color='red', linewidth=2)
+        all_handles.append(max_handle)
+        all_labels.append('Max')
     
-    # Match plot1.py's font sizes
-    ax.set_title("Resource Metrics", fontsize=84)
-    ax.set_xticks(x)
-    ax.set_xticklabels(metrics, fontsize=80)
-    ax.set_ylabel("Value", fontsize=82)
-    ax.tick_params(axis='y', labelsize=78)
-    # Remove decimal points from y-axis
-    ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, p: f'{int(x)}'))
-    ax.grid(True, alpha=0.3, linestyle='--')
-    
-    # Add legend at the top center, above the graph area
-    handles, labels = ax.get_legend_handles_labels()
-    fig.legend(handles, labels,
+    fig.legend(all_handles, all_labels,
                loc='upper center',
-               ncol=3,
+               ncol=4,
                frameon=True,
-               fontsize=82,  # Match plot1.py
-               bbox_to_anchor=(0.5, 1.03),  # Match plot1.py
+               fontsize=76,  # Match plot4.py
+               bbox_to_anchor=(0.5, 1.03),
                bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0, 0.01, 1, 0.90])  # Match plot1.py
+    fig.tight_layout(rect=[0.02, 0.01, 1, 0.90])  # Match plot4.py
     
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
@@ -145,4 +183,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
