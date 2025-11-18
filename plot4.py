@@ -420,7 +420,7 @@ def main():
     
     # Match plot1.py's figure size and font size ratios
     fig_width = 36  # Same as plot1.py
-    fig, axes = plt.subplots(1, 3, figsize=(fig_width, 18))  # Reduced height
+    fig, axes = plt.subplots(1, 3, figsize=(fig_width, 13.5))  # Height reduced to 75%
     fig.patch.set_facecolor('white')
     
     # Color scheme - unified dark colors

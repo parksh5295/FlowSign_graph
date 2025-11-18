@@ -62,7 +62,7 @@ def main():
     
     # Match plot1.py's figure size and font size ratios
     fig_width = 36  # Same as plot1.py
-    fig, ax = plt.subplots(1, 1, figsize=(fig_width, 18))  # Reduced height
+    fig, ax = plt.subplots(1, 1, figsize=(fig_width, 13.5))  # Height reduced to 75%
     fig.patch.set_facecolor('white')
     ax.set_facecolor('white')
     

@@ -416,7 +416,7 @@ def main():
     
     # Match plot4.py's figure size and layout
     fig_width = 36  # Same as plot4.py
-    fig, axes = plt.subplots(1, 3, figsize=(fig_width, 18))  # 3 subplots horizontally
+    fig, axes = plt.subplots(1, 3, figsize=(fig_width, 13.5))  # Height reduced to 75%
     fig.patch.set_facecolor('white')
     
     # Color scheme - unified dark colors

@@ -30,7 +30,7 @@ def main():
     # A4 half-width size (A4 width = 8.27 inches, half = ~4 inches)
     # Increase figure size to accommodate larger text (similar to paper body text)
     fig_width = 36 if len(datasets) > 2 else 33  # Wider for larger text
-    fig, axes = plt.subplots(1, 2, figsize=(fig_width, 18))  # Reduced height
+    fig, axes = plt.subplots(1, 2, figsize=(fig_width, 13.5))  # Height reduced to 75%
     fig.patch.set_facecolor('white')
 
     # ----- F1 Score subplot -----
