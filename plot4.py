@@ -109,12 +109,13 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
             ax.text(pos, val + 0.5, f'{val:.1f}',
                    ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
         
-        # Set y-axis to show lower range (0-18) to make SoTA ML appear lower
-        ax.set_ylim(0, 18)
+        # Set y-axis to show lower range (0-20) - keep Snort/Snort+FlowSign position fixed
+        # SoTA ML will appear lower relative to the fixed high values
+        ax.set_ylim(0, 20)
         
-        # Add break symbol at top of lower range (adjusted for new y-axis range)
+        # Add break symbol at top of lower range
         # x-axis range is -0.2 to 1.2, so keep width within this range
-        add_break_symbol(ax, 14, x_center=0.5, width=1.0)
+        add_break_symbol(ax, 16, x_center=0.5, width=1.0)
         
         # Keep top spine visible but it will be covered by the break symbol
         ax.spines['top'].set_visible(True)
@@ -122,15 +123,12 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
         # Set y-axis ticks for lower range
         ax.set_yticks([0, 5, 10, 15])
         
-        # Create second y-axis range for high values (using twinx approach)
-        # Instead, we'll plot high values scaled to upper range
-        # But first, let's use a different approach: plot high values in a transformed coordinate
-        
         # Plot high values scaled to fit in upper part of visible area
+        # Keep Snort and Snort + FlowSign at fixed position (17-20 range)
         for (method, orig_i), pos, val in zip(high_methods, high_positions, high_values):
-            # Scale high value to fit in upper range (15-18)
-            # Map from [high_min, high_max] to [15, 18]
-            scaled_val = 15 + (val - high_min) / (high_max - high_min) * 3
+            # Scale high value to fit in upper range (17-20) - fixed position
+            # Map from [high_min, high_max] to [17, 20]
+            scaled_val = 17 + (val - high_min) / (high_max - high_min) * 3
             ax.bar(
                 pos,
                 scaled_val,
@@ -138,23 +136,9 @@ def plot_metric(ax, df, metric_name, methods, colors, bar_width, method_display_
                 color=colors[method],
                 alpha=0.7
             )
-            # Add text annotation with actual value (adjusted for new y-axis range)
-            ax.text(pos, 17.5, f'{val:.1f}',
+            # Add text annotation with actual value
+            ax.text(pos, 19.5, f'{val:.1f}',
                    ha='center', va='bottom', fontsize=21, color=colors[method], weight='bold')
-        
-        # Add custom y-axis label for upper range
-        # Create a second set of ticks for upper range
-        upper_ticks = np.linspace(high_min, int(high_max), 5)
-        upper_tick_positions = 15 + (upper_ticks - high_min) / (high_max - high_min) * 3
-        # Add secondary y-axis labels on the right
-        ax2 = ax.twinx()
-        ax2.set_ylim(ax.get_ylim())
-        ax2.set_yticks(upper_tick_positions)
-        ax2.set_yticklabels([f'{int(t)}' for t in upper_ticks], fontsize=20)
-        ax2.spines['right'].set_visible(True)
-        ax2.spines['top'].set_visible(False)
-        ax2.spines['left'].set_visible(False)
-        ax2.spines['bottom'].set_visible(False)
     else:
         # Plot normally (for Avg_Processing_Time and p95_Latency)
         positions = [x_center - bar_width, x_center, x_center + bar_width]
