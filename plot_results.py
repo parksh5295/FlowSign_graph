@@ -8,17 +8,17 @@ import pandas as pd
 
 def plot_single_result(df, title, output_path):
     """Plot a single result CSV file as a separate graph."""
-    # A4 half-width size (A4 width = 8.27 inches, half = ~4 inches)
-    # Increase figure size to accommodate 3x larger text
-    fig, ax = plt.subplots(1, 1, figsize=(24, 10.5))  # 3x width and height for 3x text
+    # Match plot1.py's figure size and font size ratios
+    fig_width = 36  # Same as plot1.py
+    fig, ax = plt.subplots(1, 1, figsize=(fig_width, 22))  # Same height as plot1.py
     fig.patch.set_facecolor('white')
     ax.set_facecolor('white')
     
-    # Color scheme
+    # Color scheme - unified dark colors (same as plot1.py and plot4.py)
     colors = {
-        'Snort': '#E74C3C',  # Red
-        'Snort_Proposed': '#27AE60',  # Green
-        'SoTA_ML': '#3498DB'  # Blue
+        'Snort': '#C0392B',  # Dark Red
+        'Snort_Proposed': '#229954',  # Dark Green
+        'SoTA_ML': '#2980B9'  # Dark Blue
     }
     
     metrics = df['Metric'].values
@@ -33,20 +33,28 @@ def plot_single_result(df, title, output_path):
         [i + bar_width for i in x]   # SoTA_ML (right)
     ]
     
+    # Method display names (match plot1.py and plot4.py)
+    method_display_names = {
+        'Snort': 'Snort',
+        'Snort_Proposed': 'Snort + FlowSign',
+        'SoTA_ML': 'SoTA ML'
+    }
+    
     for i, method in enumerate(methods):
         ax.bar(
             positions[i],
             df[method],
             width=bar_width,
-            label=method.replace('_', ' '),
+            label=method_display_names.get(method, method.replace('_', ' ')),
             color=colors[method]
         )
     
-    ax.set_title(title, fontsize=30)
+    # Match plot1.py's font sizes
+    ax.set_title(title, fontsize=84)
     ax.set_xticks(x)
-    ax.set_xticklabels(metrics, fontsize=24)
-    ax.set_ylabel("Value", fontsize=27)
-    ax.tick_params(axis='y', labelsize=24)
+    ax.set_xticklabels(metrics, fontsize=80)
+    ax.set_ylabel("Value", fontsize=82)
+    ax.tick_params(axis='y', labelsize=78)
     ax.grid(True, alpha=0.3, linestyle='--')
     
     # Add legend at the top center, above the graph area
@@ -55,11 +63,11 @@ def plot_single_result(df, title, output_path):
                loc='upper center',
                ncol=3,
                frameon=True,
-               fontsize=27,
-               bbox_to_anchor=(0.5, 1.0),
+               fontsize=82,  # Match plot1.py
+               bbox_to_anchor=(0.5, 1.03),  # Match plot1.py
                bbox_transform=fig.transFigure)
     
-    fig.tight_layout(rect=[0, 0.02, 1, 0.95])
+    fig.tight_layout(rect=[0, 0.09, 1, 0.90])  # Match plot1.py
     
     # Save image
     plt.savefig(output_path, dpi=300)
