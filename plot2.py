@@ -136,10 +136,47 @@ def main():
                               label=method_display_names.get(method, method.replace('_', ' ')) if metric_idx == 0 else '',
                               color=colors[method])
         
-        # Add break symbol (across the entire x-axis range)
-        x_range = len(metrics)
-        for x_pos in range(x_range):
-            add_break_symbol(ax, break_position, x_center=x_pos, width=0.3)
+        # Add break symbol (across the entire x-axis range - one long wavy line)
+        # 전체 x축에 걸쳐 하나의 긴 물결을 그림
+        x_min = -0.5
+        x_max = len(metrics) - 0.5
+        x_center = (x_min + x_max) / 2
+        width = x_max - x_min + 0.5  # 전체 x축 범위 + 여유
+        
+        # Create two wavy lines (double line, parallel) across entire x-axis
+        from matplotlib.patches import Polygon
+        x_data = np.linspace(x_min, x_max, 500)
+        y_range = ax.get_ylim()[1] - ax.get_ylim()[0]
+        
+        # Common wave pattern (same amplitude for parallel lines)
+        wave_pattern = 0.01 * y_range * np.sin(15 * np.pi * (x_data - x_min) / (x_max - x_min))
+        
+        # First wavy line (outer, upper) - parallel to second line
+        y_data1 = break_position + 0.025 * y_range + wave_pattern
+        
+        # Second wavy line (inner, lower) - parallel to first line
+        y_data2 = break_position + 0.0025 * y_range + wave_pattern
+        
+        # Create polygon path for white fill between the two wavy lines
+        polygon_points = np.vstack([
+            np.column_stack([x_data, y_data1]),  # Outer line forward
+            np.column_stack([x_data[::-1], y_data2[::-1]])  # Inner line backward
+        ])
+        
+        # Fill the area between the two wavy lines with white
+        poly = Polygon(polygon_points, facecolor='white', edgecolor='none', zorder=13, transform=ax.transData)
+        ax.add_patch(poly)
+        
+        # Draw the two wavy lines
+        ax.plot(x_data, y_data1, 'k-', linewidth=3, clip_on=False, zorder=15)
+        ax.plot(x_data, y_data2, 'k-', linewidth=3, clip_on=False, zorder=15)
+        
+        # Add small vertical lines at ends
+        ax.plot([x_data[0], x_data[0]], [y_data1[0], y_data2[0]], 
+                'k-', linewidth=3, clip_on=False, zorder=15)
+        ax.plot([x_data[-1], x_data[-1]], [y_data1[-1], y_data2[-1]], 
+                'k-', linewidth=3, clip_on=False, zorder=15)
+        
         ax.spines['top'].set_visible(True)
         
         # Set y-axis ticks

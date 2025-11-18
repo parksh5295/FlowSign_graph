@@ -530,7 +530,7 @@ def main():
                    bbox_transform=fig.transFigure)
     
     # 위쪽 여백을 범례 2개가 들어갈 수 있을 만큼 키움
-    fig.tight_layout(rect=[0.02, 0.01, 1, 0.85])  # 위쪽 여백 확대
+    fig.tight_layout(rect=[0.02, 0.01, 1, 0.80])  # 위쪽 여백 더 확대
     
     # Output folder: ../Graph
     graph_dir = base_dir.parent / "Graph"
