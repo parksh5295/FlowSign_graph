@@ -10,7 +10,7 @@ def plot_single_result(df, title, output_path):
     """Plot a single result CSV file as a separate graph."""
     # Match plot1.py's figure size and font size ratios
     fig_width = 36  # Same as plot1.py
-    fig, ax = plt.subplots(1, 1, figsize=(fig_width, 22))  # Same height as plot1.py
+    fig, ax = plt.subplots(1, 1, figsize=(fig_width, 18))  # Reduced height
     fig.patch.set_facecolor('white')
     ax.set_facecolor('white')
     
@@ -87,10 +87,10 @@ def main():
     os.makedirs(graph_dir, exist_ok=True)
     
     # Load and plot each CSV file separately
+    # Note: result4.csv is handled by plot4.py separately
     datasets = [
         ("result2.csv", "Performance Metrics", "result2_performance.png"),
-        ("result3.csv", "Resource Metrics", "result3_resource.png"),
-        ("result4.csv", "Processing Metrics", "result4_processing.png")
+        ("result3.csv", "Resource Metrics", "result3_resource.png")
     ]
     
     for csv_file, title, output_file in datasets:
